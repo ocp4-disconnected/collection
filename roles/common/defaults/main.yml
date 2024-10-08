@@ -2,7 +2,7 @@
 
 common_git_repos:
   - "https://github.com/cjnovak98/ocp4-disconnected-collection.git"
-  - "https://github.com/cjnovak98/samba-share.git"
+  - "https://github.com/cjnovak98/ocp4-disconnected-config"
 
 
 ## Global variables used by most/all roles
