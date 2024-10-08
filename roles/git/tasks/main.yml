@@ -53,10 +53,12 @@
 
 - name: Copy bare git repos to git user directory
   ansible.builtin.copy:
-    src: "{{ common_git_repos_dir }}/{{ item }}"
-    dest: "{{ git_user_repo_dir }}/{{ item }}"
+    src: "{{ common_git_repos_dir }}/{{ item | basename }}"
+    dest: "{{ git_user_repo_dir }}/{{ item | basename }}"
     mode: '0755'
     owner: git
     group: git
-  loop: "{{ common_git_repos | basename }}"
+  loop: "{{ common_git_repos }}"
+  loop_control:
+    label: "{{ item | basename }}"
   become: true
