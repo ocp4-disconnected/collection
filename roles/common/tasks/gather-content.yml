@@ -113,11 +113,11 @@
 
 - name: Clone git repositories if not present
   ansible.builtin.git:
-    repo: "{{ item.url }}"
-    dest: "{{ common_git_repos_dir }}/{{ item.url | basename) }}"
+    repo: "{{ item }}"
+    dest: "{{ common_git_repos_dir }}/{{ item | basename) }}"
     clone: yes
     update: yes
     bare: true
   loop: "{{ common_git_repos }}"
   loop_control:
-    label: "{{ item.url }}"
+    label: "{{ item }}"
