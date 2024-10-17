@@ -1,0 +1,10 @@
+---
+# tasks file for openshift-gitops
+- name: Generate configuration files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ common_openshift_download_dir }}/{{ item }}"
+    mode: '0644'
+  with_items:
+   - gitops-repo.yaml
+   - gitops-subscription.yaml
