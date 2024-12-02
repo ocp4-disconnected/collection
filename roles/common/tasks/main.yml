@@ -1,3 +1,8 @@
+- name: Fail if the playbook is run as root
+  ansible.builtin.fail:
+    msg: "This playbook should not be run as root!"
+  when: ansible_facts.env.USER == 'root'
+
 - name: Ensure required packages are installed
   ansible.builtin.package:
     name: nmstate,openssl,httpd-tools,podman,git,python3-jmespath,coreos-installer ## Variablize pls common_packages: (Maybe add extra packages var?)
