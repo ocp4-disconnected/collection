@@ -6,7 +6,7 @@
   with_items:
     - "{{ common_openshift_oc_mirror_dir }}"
   when: 
-    - mirror_content_pull_mirror | bool
+    - common_content_pull | bool
     - direction == 'pull'
 
 - name: Fetch the cluster update keys YAML file
@@ -43,7 +43,7 @@
   loop_control:
     loop_var: item
   when: 
-    - mirror_content_pull_mirror | bool
+    - common_content_pull | bool
     - direction == 'pull'
 
 - name: push images
