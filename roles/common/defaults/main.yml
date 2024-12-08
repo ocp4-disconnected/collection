@@ -10,6 +10,7 @@ common_install_dir: "{{ ansible_user_dir }}"
 common_trident_version: v24.06.0
 common_fips_enabled: true
 common_oc_mirror_v2: true
+common_content_pull: false
 
 
 
