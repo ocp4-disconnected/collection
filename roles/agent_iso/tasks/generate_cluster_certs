@@ -1,0 +1,44 @@
+- name: Create cluster certs dir
+  ansible.builtin.file:
+    path: "{{ common_openshift_cluster_install_dir }}/certs"
+    mode: '0755'
+    state: directory
+
+- name: Generate cluster private keys
+  community.crypto.openssl_privatekey:
+    path: "{{ common_openshift_cluster_install_dir }}/certs/{{ item }}.key"
+    size: 4096
+    type: RSA
+    cipher: null
+    passphrase: null
+  with_items:
+    - api
+    - ingress
+
+- name: Generate API CSR 
+  community.crypto.openssl_csr:
+    privatekey_path: "{{ common_openshift_cluster_install_dir }}/certs/api.key"
+    path: "{{ common_openshift_cluster_install_dir }}/certs/api.csr"
+    subject_alt_name: DNS:api.{{ agent_iso_cluster_name }}.{{ common_cluster_domain }},DNS:api-int.{{ agent_iso_cluster_name }}.{{ common_cluster_domain }}
+
+- name: Generate Ingress CSR 
+  community.crypto.openssl_csr:
+    privatekey_path: "{{ common_openshift_cluster_install_dir }}/certs/ingress.key"
+    path: "{{ common_openshift_cluster_install_dir }}/certs/ingress.csr"
+    subject_alt_name: DNS:apps.{{ agent_iso_cluster_name }}.{{ common_cluster_domain }},DNS:*apps.{{ agent_iso_cluster_name }}.{{ common_cluster_domain }}
+
+- name: Generate self-signed certificate for cluster
+  community.crypto.x509_certificate:
+    ownca_privatekey_path: /etc/pki/ca-trust/source/anchors/ca.key
+    ownca_path: /etc/pki/ca-trust/source/anchors/ca.cer
+    path: "{{ common_openshift_cluster_install_dir }}/certs/{{ item }}.crt"
+    csr_path: "{{ common_openshift_cluster_install_dir }}/certs/{{ item }}.csr"
+    ownca_not_after: +365d
+    ownca_not_before: "-1d"
+    provider: ownca
+    owner: "{{ ansible_user_id }}"
+    group: wheel
+  with_items:
+    - api
+    - ingress
+  become: true
