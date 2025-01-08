@@ -102,3 +102,13 @@
     mode: '0644'
     backup: true
   when: gen_iso is changed or gen_iso_fips is changed
+
+- name: Insert master-0 IP as nameserver
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.conf
+    line: "nameserver {{ common_ip_space }}.{{ common_nodes | selectattr('name', 'equalto', 'master-0') | map(attribute='ip') | first }}"
+    insertafter: '^nameserver'
+  when: 
+    - common_ip_space is defined
+    - common_nodes is defined
+  become: true
