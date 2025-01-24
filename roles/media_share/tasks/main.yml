@@ -30,4 +30,4 @@
   when: media_share_idrac | bool and  filtered_idracs | length > 0
 
 - ansible.builtin.include_tasks: stop_temp_web_server.yml
-  when: media_share_stop_web_server | bool
+  when: media_share_stop_webserver | bool

@@ -40,6 +40,18 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
+- name: Check if FIPS mode is enabled
+  command: fips-mode-setup --check
+  register: fips_check_result
+  failed_when: false
+  become: true
+  when: common_fips_enabled is undefined
+
+- name: Set common_fips_enabled fact
+  set_fact:
+    common_fips_enabled: "{{ 'enabled' in fips_check_result.stdout }}"
+  when: common_fips_enabled is undefined
+
 - name: Generate configuration files
   ansible.builtin.template:
     src: "{{ item }}.j2"

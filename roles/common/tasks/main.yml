@@ -164,6 +164,16 @@
     - tridentctl
   when: move_bin is changed
 
+- name: Check if FIPS mode is enabled
+  command: fips-mode-setup --check
+  register: fips_check_result
+  failed_when: false
+  become: true
+
+- name: Set common_fips_enabled fact
+  set_fact:
+    common_fips_enabled: "{{ 'enabled' in fips_check_result.stdout }}"
+
 - name: Validate openshift-install version
   ansible.builtin.shell: "openshift-install version"
   register: install_check
