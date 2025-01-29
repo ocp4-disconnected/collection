@@ -21,7 +21,7 @@
       docker://{{ ipv4_address | first }}:{{ common_registry_port }} --v2
   environment:
     OC_MIRROR_CACHE: "{{ common_openshift_oc_mirror_dir }}/.cache"
-    OCP_SIGNATURE_VERIFICATION_PK: "{{ role_path }}/files/pgpkey"
+    OCP_SIGNATURE_VERIFICATION_PK: "{{ common_openshift_oc_mirror_dir }}/pgpkey"
   register: push_images_v2
   retries: 5
   delay: 10
