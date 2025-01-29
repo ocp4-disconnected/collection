@@ -7,3 +7,4 @@ agent_iso_cluster_name: ocp-sno
 agent_iso_dns_resolver: '{{ common_ip_space }}.1'
 agent_iso_table_id: 254
 agent_iso_cluster_cidr: '{{ common_ip_space }}.0/{{ common_subnet_mask }}'
+agent_iso_generate_cluster_certs: true

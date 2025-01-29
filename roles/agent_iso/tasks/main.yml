@@ -102,3 +102,6 @@
     mode: '0644'
     backup: true
   when: gen_iso is changed or gen_iso_fips is changed
+
+- include_tasks: generate_cluster_certs.yml
+  when: agent_iso_generate_cluster_certs | bool
