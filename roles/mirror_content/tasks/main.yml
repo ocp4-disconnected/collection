@@ -9,6 +9,32 @@
     - mirror_content_pull_mirror | bool
     - direction == 'pull'
 
+- name: Fetch the cluster update keys YAML file
+  ansible.builtin.get_url:
+    url: "{{ mirror_content_pgpkey_location }}"
+    dest: "/tmp/pgpkey_raw"
+    mode: '0644'
+  when: 
+    - mirror_content_pull_mirror | bool
+    - direction == 'pull'
+
+- name: Process and clean the file
+  ansible.builtin.shell: |
+    sed -n '/openshift[.]io/d;s/Comment:.*//;s/^    //p' /tmp/pgpkey_raw > "{{ common_openshift_oc_mirror_dir }}/pgpkey"
+  args:
+    executable: /bin/bash
+  when: 
+    - mirror_content_pull_mirror | bool
+    - direction == 'pull'
+
+- name: Ensure permissions are correct
+  ansible.builtin.file:
+    path: "{{ common_openshift_oc_mirror_dir }}/pgpkey"
+    mode: '0644'
+  when: 
+    - mirror_content_pull_mirror | bool
+    - direction == 'pull'
+
 - name: Include tasks to pull images
   include_tasks: pull_images.yml
   loop: 
