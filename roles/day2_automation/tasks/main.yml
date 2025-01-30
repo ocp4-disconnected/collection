@@ -5,15 +5,29 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
-- name: Generate day2 app config
+- name: debug
+  ansible.builtin.debug:
+    msg: "{{ cluster }}"
+  
+- name: Generate day2 values file
   ansible.builtin.template:
-    src: "day2-argo-app.j2"
-    dest: "{{ playbook_dir }}/day2-argo-app.yaml"
+    src: "day2-values-file.j2"
+    dest: "{{ playbook_dir }}/day2-values.yaml"
     mode: '0644'
     owner: "{{ ansible_user_id }}"
     group: wheel
   become: true
-  register: day2_config
+  register: day2_values
+
+# - name: Generate day2 app config
+#   ansible.builtin.template:
+#     src: "day2-argo-app.j2"
+#     dest: "{{ playbook_dir }}/day2-argo-app.yaml"
+#     mode: '0644'
+#     owner: "{{ ansible_user_id }}"
+#     group: wheel
+#   become: true
+#   register: day2_config
 
 # - name: Create day2 app in OpenShift
 #   ansible.builtin.command:
@@ -25,10 +39,6 @@
 #     path: "{{ playbook_dir }}/day2-argo-app.yaml"
 #     state: absent
 
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ cluster }}"
-  when: contents.stdout
 
 # - name: write to file
 #   ansible.builtin.file:
