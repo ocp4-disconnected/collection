@@ -1,3 +1,7 @@
+- name: Read in variables.yml file to include required variables
+  ansible.builtin.include_vars:
+    file: {{playbook_dir}}../variables.yaml
+
 - name: Ensure required packages are installed
   ansible.builtin.package:
     name: nmstate,openssl,httpd-tools,podman,git,python3-jmespath,coreos-installer ## Variablize pls common_packages: (Maybe add extra packages var?)
