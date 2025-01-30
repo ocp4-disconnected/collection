@@ -33,7 +33,7 @@
   when: template_result.changed | bool
   retries: 5
   delay: 10
-  failed_when: mirror_pull.stdout is search("error|failed|timeout|permission denied|mirror failed|unable to fetch", ignorecase=True)
+  failed_when: mirror_pull.stdout is search("error|failed|timeout|permission denied|mirror failed|unable to fetch|invalid signature", ignorecase=True)
   until: mirror_pull.rc == 0
 
 - name: Remove pull oc-mirror-workspace
