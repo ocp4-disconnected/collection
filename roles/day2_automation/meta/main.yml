@@ -1,2 +1,2 @@
-#dependencies:
-#  - ocp4.disconnected.common
+dependencies:
+  - ocp4.disconnected.common
