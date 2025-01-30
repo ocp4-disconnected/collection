@@ -6,7 +6,7 @@
   register: patch_operators
   retries: 15
   delay: 15
-  until: patch_operators == 0
+  until: patch_operators.rc == 0
 
 - name: Run workflow for applying ICSP with oc-mirror v1
   include_tasks: mirror-v1.yml
