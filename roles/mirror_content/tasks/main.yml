@@ -20,6 +20,11 @@
       args:
         executable: /bin/bash"
 
+    - name: Ensure permissions are correct
+      ansible.builtin.file:
+        path: "{{ common_openshift_oc_mirror_dir }}/pgpkey"
+        mode: '0644'
+
     - name: Include tasks to pull images
       include_tasks: pull_images.yml
       loop:
@@ -31,7 +36,7 @@
   when:
     - common_content_pull | bool
     - direction == 'pull'
-    
+
 - name: push images
   ansible.builtin.include_tasks: push_images.yml
   when: direction == 'push'
