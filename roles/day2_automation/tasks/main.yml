@@ -5,15 +5,19 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
-- name: apply argo app
-  ansible.builtin.command:
-    cmd: "echo {{ lookup('template', 'day2-argo-app.j2') }} | oc apply -f - --dry-run"
-  register: contents
+- name: generate argo config
+  ansible.builtin.template:
+    src: "day2-argo-app.j2"
+    dest: "{{ playbook_dir }}/day2-argo-app.yaml"
+    mode: '0644'
+    owner: "{{ ansible_user_id }}"
+    group: wheel
+  become: true
 
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ contents.stdout_lines }}"
-  when: contents.stdout
+# - name: debug
+#   ansible.builtin.debug:
+#     msg: "{{ lookup }}"
+#   when: contents.stdout
 
 # - name: write to file
 #   ansible.builtin.file:
