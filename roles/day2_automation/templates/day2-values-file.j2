@@ -1,8 +1,9 @@
 # General cluster-level information
-cluster:{{ cluster }}
+cluster:
   # Used in the proxy to specify the certs to use there.
   # Used in proxy-custom-ca-cm.yaml in turn used by proxy.yaml
   ca:
+    {{ cluster.ca }}
 #    # true if you have a cert and want to set it, false to skip setting a cluster ca.
 #    configMapName: cluster-proxy-ca
 #    content: |- # The cluster's CA
