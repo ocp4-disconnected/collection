@@ -26,7 +26,13 @@
 
 - name: commit change
   ansible.builtin.command:
-    cmd: "git commit -am 'update day2 values accordingly' && git push localhost"
+    cmd: "git commit -am 'update day2 values accordingly'"
+  args:
+    chdir: "{{ playbook_dir }}/../"
+
+- name: push change
+  ansible.builtin.command:
+    cmd: "git push localhost"
   args:
     chdir: "{{ playbook_dir }}/../"
 
