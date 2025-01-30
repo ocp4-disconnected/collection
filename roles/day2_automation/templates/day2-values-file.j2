@@ -16,5 +16,6 @@ cluster:
         key: |- # The content of the ssl cert key to use for ingress
         {{ cluster.ingress.key | indent(8) }}
     {% endif %}
+
 mtv:
-    enabled: {{ mtv.enabled if mtv.enabled is not none else true }}
+    enabled: {{ mtv.enabled if mtv["enabled"] is not none else true }}
