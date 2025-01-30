@@ -1,6 +1,2 @@
 ---
-# defaults file for day1_automation
-helm_values_filepath: "{{ playbook_dir }}/../helm/openshift-gitops/values.yaml"
-helm_day1_release_name: gitops-day1
-helm_options: ""
-auto_run_helm: true
+# defaults file for day2_automation
