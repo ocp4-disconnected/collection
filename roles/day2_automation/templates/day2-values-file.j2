@@ -5,5 +5,6 @@ cluster:
   ca:
     {% if not (cluster["ca"] is none) %}
     configMapName: {{ cluster.ca.configMapName }}
-    # content: {{ cluster.ca.content }}
+    content: |-
+    {{ cluster.ca.content | indent(4) }}
     {% endif %}
