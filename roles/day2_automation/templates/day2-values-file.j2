@@ -3,8 +3,6 @@ cluster:
   # Used in the proxy to specify the certs to use there.
   # Used in proxy-custom-ca-cm.yaml in turn used by proxy.yaml
   ca:
-    {% if cluster.ca is defined %}
-    # configMapName: '{{ cluster.ca.configMapName | default "cluster-proxy-ca" }}'
-    # content: '{{ cluster.ca.content }}'
+    {% if cluster["ca"] is defined %}
     testing
     {% endif %}
