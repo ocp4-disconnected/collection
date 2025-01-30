@@ -2,9 +2,19 @@
 cluster:
   # Used in the proxy to specify the certs to use there.
   # Used in proxy-custom-ca-cm.yaml in turn used by proxy.yaml
-  ca:
-    {% if not (cluster["ca"] is none) %}
-    configMapName: {{ cluster.ca.configMapName }}
-    content: |-
-    {{ cluster.ca.content | indent(4) }}
+    ca:
+        {% if not (cluster["ca"] is none) %}
+        configMapName: {{ cluster.ca.configMapName }}
+        content: |-
+        {{ cluster.ca.content | indent(8) }}
+        {% endif %}
+    {% if cluster["ingress"] is defined %}
+    ingress:
+        secretName: {{ cluster.ingress.secretName }}
+        cert: |- # The content of the ssl cert to use for ingress
+        {{ cluster.ingress.cert | indent(8) }}
+        key: |- # The content of the ssl cert key to use for ingress
+        {{ cluster.ingress.key | indent(8) }}
     {% endif %}
+mtv:
+    enabled: {{ mtv.enabled if mtv.enabled is not none else true }}
