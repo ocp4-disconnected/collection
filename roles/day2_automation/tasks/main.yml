@@ -7,7 +7,7 @@
 
 - name: apply argo app
   ansible.builtin.command:
-    cmd: "pwd && touch ./test.yaml && echo {{ lookup('template', 'day2-argo-app.j2') }} > ./test.yaml"
+    cmd: "echo {{ lookup('template', 'day2-argo-app.j2') }} | oc apply -f - --dry-run"
   register: contents
 
 - name: debug
