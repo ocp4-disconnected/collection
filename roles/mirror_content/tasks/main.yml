@@ -18,7 +18,7 @@
       ansible.builtin.shell: |
         sed -n '/openshift[.]io/d;s/Comment:.*//;s/^    //p' /tmp/pgpkey_raw > "{{ common_openshift_oc_mirror_dir }}/pgpkey"
       args:
-        executable: /bin/bash"
+        executable: /bin/bash
 
     - name: Ensure permissions are correct
       ansible.builtin.file:
