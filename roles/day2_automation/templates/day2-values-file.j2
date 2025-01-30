@@ -3,36 +3,20 @@ cluster:
   # Used in the proxy to specify the certs to use there.
   # Used in proxy-custom-ca-cm.yaml in turn used by proxy.yaml
   ca:
-    {{ cluster.ca }}
-#    # true if you have a cert and want to set it, false to skip setting a cluster ca.
-#    configMapName: cluster-proxy-ca
-#    content: |- # The cluster's CA
-#      ----- CA Content ------
-#      ......
-#      ----- end content ----
-#  # Ingress related configuraiton.
-#  # Used in:
-#  #  - ingress-certs-secret.yaml
-#  #  - ingress-controller.yaml
-#  ingress:
-#    secretName: ingress-cert
-#    cert: |- # The content of the ssl cert to use for ingress
-#      ---- cert content ----
-#      ....
-#      ---- content ------
-#    key: # The content of the ssl cert key to use for ingress
-#      ----- cert content ----
-#      .....
-#      ----- cert content ----
-# TODO:: doublecheck updated from site
-# Configuration for NodeNetworkConfigurationPolicy
-# Used in:
-#  - nmstate-nncp-nodes.yaml
-#  - nmstate-nncp-bond.yaml 
+    {% if cluster.ca is defined %}
+    configMapName: {{ cluster.ca.configMapName | default cluster-proxy-ca }}
+    content: {{ cluster.ca.content }}
+    {% endif %}
+  {% if cluster.ingress is defined %}
+  ingress:
+    secretName: {{ cluster.ingress.secretName | default "ingress-cert" }}
+    cert: {{ cluster.ingress.cert }}
+    key: {{ cluster.ingress.key }}
+  {% endif %}
 mtv:
-  enabled: true
-  catalog_source: cs-redhat-operator-index-v4-16
-  target_namespace: openshift-mtv
+  enabled: {{ mtv.enabled | default true }}
+  catalog_source: {{ mtv.catalog_source | default cs-redhat-operator-index-v4-16 }}
+  target_namespace: {{ mtv.target_namespace | default openshift-mtv}}
   controller_max_vm_inflight: 20
   # these values will need to be replaced by actual vcenter info in order to pull over VMs from that source
   provider:
