@@ -9,7 +9,6 @@ All notable changes to this project will be documented in this file.
 - Ability to create webserver independent of idrac based deployments
 - Point bastion dns at master-0 for cluster resource resolution
 - Pulling content now explicetly defined
-- More operators to be pulled by default
 
 ### Changed
 - Changed fips cluster mode from variable to be based on system fips-mode-check
@@ -18,8 +17,6 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Variable for stoping webserver
-- Variable for IPS in idrac array
-- Capitalization on comments 
 
 ### Removed
 - oc-mirror v2 logging output
