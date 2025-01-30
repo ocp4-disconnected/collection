@@ -12,7 +12,7 @@
 
 - name: debug
   ansible.builtin.debug:
-    msg: "{{ contents.stdout }}"
+    msg: "{{ contents.stdout_lines }}"
   when: contents.stdout
 
 # - name: write to file
