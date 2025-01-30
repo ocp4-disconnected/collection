@@ -5,7 +5,7 @@
     cmd: "echo {{ lookup('template', 'day2-argo-app.j2') }}"
   register: contents
 
-- name: debug
-  ansible.builtin.debug:
-    msg: {{ contents.stdout }}
+#- name: debug
+#  ansible.builtin.debug:
+#    msg: {{ contents.stdout }}
 
