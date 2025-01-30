@@ -8,6 +8,23 @@
       with_items:
         - "{{ common_openshift_oc_mirror_dir }}"
 
+    - name: Check if {{ ansible_user_dir }}/.docker/config.json exists
+      ansible.builtin.stat:
+        path: "{{ ansible_user_dir }}/.docker/config.json"
+      register: docker_config_json
+      failed_when: not docker_config_json.stat.exists
+    
+    - name: Load the JSON file
+      ansible.builtin.slurp:
+        path: "{{ ansible_user_dir }}/.docker/config.json"
+      register: docker_config_json_content
+      when: docker_config_json.stat.exists
+    
+    - name: Parse and validate JSON
+      set_fact:
+        config_json: "{{ docker_config_json_content.content | b64decode | from_json }}"
+      when: docker_config_json.stat.exists
+
     - name: Fetch the cluster update keys YAML file
       ansible.builtin.get_url:
         url: "{{ mirror_content_pgpkey_location }}"
