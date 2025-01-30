@@ -12,6 +12,6 @@
 
 - name: debug
   ansible.builtin.debug:
-    msg: {{ contents.stdout }}
+    msg: "{{ contents.stdout }}"
   when: contents.stdout
 
