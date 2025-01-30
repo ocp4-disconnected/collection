@@ -4,7 +4,7 @@ cluster:
   # Used in proxy-custom-ca-cm.yaml in turn used by proxy.yaml
   ca:
     {% if {{ cluster.ca }} is defined %}
-    configMapName: {{ cluster.ca.configMapName | default cluster-proxy-ca }}
+    configMapName: {{ cluster.ca.configMapName | default "cluster-proxy-ca" }}
     content: {{ cluster.ca.content }}
     {% endif %}
 #   {% if cluster.ingress is defined %}
@@ -15,8 +15,8 @@ cluster:
 #   {% endif %}
 # mtv:
 #   enabled: {{ mtv.enabled | default true }}
-#   catalog_source: {{ mtv.catalog_source | default cs-redhat-operator-index-v4-16 }}
-#   target_namespace: {{ mtv.target_namespace | default openshift-mtv}}
+#   catalog_source: {{ mtv.catalog_source | default "cs-redhat-operator-index-v4-16" }}
+#   target_namespace: {{ mtv.target_namespace | default "openshift-mtv" }}
 #   controller_max_vm_inflight: 20
 #   # these values will need to be replaced by actual vcenter info in order to pull over VMs from that source
 #   provider:
