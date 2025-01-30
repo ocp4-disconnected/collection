@@ -7,7 +7,7 @@
 
 - name: apply argo app
   ansible.builtin.command:
-    cmd: "pwd && echo {{ lookup('template', 'day2-argo-app.j2') }} > test.yaml"
+    cmd: "pwd && touch ./test.yaml && echo {{ lookup('template', 'day2-argo-app.j2') }} > ./test.yaml"
   register: contents
 
 - name: debug
@@ -15,7 +15,7 @@
     msg: "{{ contents.stdout }}"
   when: contents.stdout
 
-- name: write to file
-  ansible.builtin.file:
+# - name: write to file
+#   ansible.builtin.file:
 
 
