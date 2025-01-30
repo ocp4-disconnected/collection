@@ -4,6 +4,6 @@ cluster:
   # Used in proxy-custom-ca-cm.yaml in turn used by proxy.yaml
   ca:
     {% if not (cluster["ca"] is none) %}
-    configMapName: {{ cluster["ca"]["configMapName"] | default "cluster-proxy-ca" }}
+    configMapName: {{ cluster.ca.configMapName }}
     # content: {{ cluster.ca.content }}
     {% endif %}
