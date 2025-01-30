@@ -12,12 +12,23 @@
 - name: Generate day2 values file
   ansible.builtin.template:
     src: "day2-values-file.j2"
-    dest: "{{ playbook_dir }}/day2-values.yaml"
-    mode: '0644'
-    owner: "{{ ansible_user_id }}"
-    group: wheel
+    dest: "{{ playbook_dir }}/../helm/openshift-gitops-day2/values.yaml"
+    mode: '0755'
+    owner: git
+    group: git
   become: true
   register: day2_values
+
+- name: update remote path
+  ansible.builtin.command:
+    cmd: "git remote add localhost git@/home/git/repos/ocp4-disconnected-config"
+
+
+- name: commit change
+  ansible.builtin.command:
+    cmd: "git commit -am 'update day2 values accordingly' && git push localhost"
+  args:
+    chdir: "{{ playbook_dir }}/../"
 
 # - name: Generate day2 app config
 #   ansible.builtin.template:
