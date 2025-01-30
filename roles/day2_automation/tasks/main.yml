@@ -5,7 +5,7 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
-- name: generate argo config
+- name: Generate day2 app config
   ansible.builtin.template:
     src: "day2-argo-app.j2"
     dest: "{{ playbook_dir }}/day2-argo-app.yaml"
@@ -13,7 +13,17 @@
     owner: "{{ ansible_user_id }}"
     group: wheel
   become: true
+  register: day2_config
 
+- name: Create day2 app in OpenShift
+  ansible.builtin.command:
+    cmd: "oc apply -f {{ playbook_dir }}/day2-argo-app.yaml"
+  when: day2_config.changed
+
+- name: Cleanup app config
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/day2-argo-app.yaml"
+    state: absent
 # - name: debug
 #   ansible.builtin.debug:
 #     msg: "{{ lookup }}"
