@@ -1,5 +1,10 @@
 ---
-# tasks file for day1_automation
+# tasks file for day2_automation
+- name: Set fact for {{ common_ip_space }} IPv4 address
+  set_fact:
+    ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
+  when: ipv4_address is undefined
+
 - name: apply argo app
   ansible.builtin.command:
     cmd: "echo {{ lookup('template', 'day2-argo-app.j2') }}"
