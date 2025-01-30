@@ -15,7 +15,7 @@
     dest: "/tmp/pgpkey_raw"
     mode: '0644'
   when: 
-    - mirror_content_pull_mirror | bool
+    - common_content_pull | bool
     - direction == 'pull'
 
 - name: Process and clean the file
@@ -24,7 +24,7 @@
   args:
     executable: /bin/bash
   when: 
-    - mirror_content_pull_mirror | bool
+    - common_content_pull | bool
     - direction == 'pull'
 
 - name: Ensure permissions are correct
@@ -32,7 +32,7 @@
     path: "{{ common_openshift_oc_mirror_dir }}/pgpkey"
     mode: '0644'
   when: 
-    - mirror_content_pull_mirror | bool
+    - common_content_pull | bool
     - direction == 'pull'
 
 - name: Include tasks to pull images
