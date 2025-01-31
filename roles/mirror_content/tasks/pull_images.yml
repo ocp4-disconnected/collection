@@ -19,8 +19,11 @@
   failed_when: mirror_pull.stdout is search("error|failed|timeout|permission denied|mirror failed|unable to fetch|invalid signature", ignorecase=True)
   until: mirror_pull.rc == 0
 
-- name: Remove pull oc-mirror-workspace
+- name: Remove pull download dirs
   ansible.builtin.file:
-    path: "{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }}/oc-mirror-workspace"
+    path: "{{ item }}"
     state: absent
+  with_items:
+    - "{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }}/oc-mirror-workspace"
+    - "{{ common_openshift_oc_mirror_dir }}/.cache"
   when: template_result.changed | bool
