@@ -27,7 +27,7 @@
 - name: check for localhost remote
   ansible.builtin.debug:
     msg: localhost remote found
-  when: "{{ remote_status.stdout is search('localhost') }}""
+  when: "{{ remote_status.stdout is search('localhost') }}"
 
 - name: update remote path
   ansible.builtin.command:
