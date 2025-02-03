@@ -36,7 +36,7 @@
 
 - name: commit change
   ansible.builtin.command:
-    cmd: "git commit -am 'update day2 values accordingly'"
+    cmd: "git add . && git commit -am 'update day2 values accordingly'"
   args:
     chdir: "{{ playbook_dir }}/../"
 
