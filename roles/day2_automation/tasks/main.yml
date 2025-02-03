@@ -46,9 +46,9 @@
     - git commit -am 'update day2 values accordingly'
   register: git_output
 
-- name: debug output
-  ansible.builtin.debug:
-    msg: "{{ git_output.stdout }}"
+# - name: debug output
+#   ansible.builtin.debug:
+#     msg: "{{ git_output.stdout }}"
 
 - name: push change
   ansible.builtin.command:
