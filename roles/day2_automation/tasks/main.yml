@@ -36,9 +36,19 @@
 
 - name: commit change
   ansible.builtin.command:
-    cmd: "git add . && git commit -am 'update day2 values accordingly'"
+    cmd: "{{ item }}"
   args:
     chdir: "{{ playbook_dir }}/../"
+  with_items:
+    - pwd
+    - git status
+    - git add . 
+    - git commit -am 'update day2 values accordingly'"
+  register: git_output
+
+- name: debug output
+  ansible.builtin.debug:
+    msg: "{{ git_output.stdout }}"
 
 - name: push change
   ansible.builtin.command:
