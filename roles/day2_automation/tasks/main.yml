@@ -32,7 +32,7 @@
 
 - name: update remote path
   ansible.builtin.command:
-    cmd: "git remote add localhost git@{{ipv4_address[0]}}/home/git/repos/ocp4-disconnected-config"
+    cmd: "git remote add localhost git@{{ipv4_address[0]}}:/home/git/repos/ocp4-disconnected-config"
   when: "{{ not remote_status.stdout is search('localhost') }}"
 
 - name: check for changes
