@@ -47,7 +47,7 @@
   args:
     chdir: "{{ playbook_dir }}/../"
   register: git_output
-  when: {{ not git_status.stdout is search("nothing to commit") }}
+  when: "{{ not git_status.stdout is search('nothing to commit') }}"
 
 - name: debug output
   ansible.builtin.debug:
