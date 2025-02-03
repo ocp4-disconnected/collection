@@ -1,2 +1,3 @@
 ---
 # vars file for day1_automation
+ANSIBLE_HOST_KEY_CHECKING=false
