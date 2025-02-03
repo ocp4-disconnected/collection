@@ -58,7 +58,7 @@
 - name: push change
   ansible.builtin.command:
     cmd: "git push localhost"
-  vars:
+  with_vars:
     ANSIBLE_HOST_KEY_CHECKING=false
   args:
     chdir: "{{ playbook_dir }}/../"
