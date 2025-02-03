@@ -5,9 +5,10 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ cluster }}"
+- name: Check for valid IP of host
+  ansible.builtin.fail:
+    msg: "No valid IP found for git host {{ ipv4_address }}"
+  when: ipv4_address is undefined
   
 - name: Generate day2 values file
   ansible.builtin.template:
@@ -57,6 +58,8 @@
 - name: push change
   ansible.builtin.command:
     cmd: "git push localhost"
+  vars:
+    - ANSIBLE_HOST_KEY_CHECKING=false
   args:
     chdir: "{{ playbook_dir }}/../"
   when: "{{ not git_status.stdout is search('nothing to commit') }}"
