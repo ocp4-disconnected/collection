@@ -8,7 +8,7 @@
 - name: Check for valid IP of host
   ansible.builtin.fail:
     msg: "No valid IP found for git host {{ ipv4_address }}"
-  when: "{{ not ipv4_address is ansible.utils.ip }}"
+  when: "{{ not ipv4_address[0] is ansible.utils.ip }}"
   
 - name: Generate day2 values file
   ansible.builtin.template:
