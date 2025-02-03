@@ -34,21 +34,24 @@
     cmd: "git remote add localhost git@/home/git/repos/ocp4-disconnected-config"
   when: "{{ not remote_status.stdout is search('localhost') }}"
 
-- name: commit change
+- name: check for changes
   ansible.builtin.command:
-    cmd: "{{ item }}"
+    cmd: "git status"
+  register: git_status
+
+- name: commit change
+  ansible.builtin.shell: |
+    pwd
+    git add . 
+    git commit -am 'update day2 values from ansible'
   args:
     chdir: "{{ playbook_dir }}/../"
-  with_items:
-    - pwd
-    - git status
-    - git add . 
-    - git commit -am 'update day2 values accordingly'
   register: git_output
+  when: {{ not git_status.stdout is search("nothing to commit") }}
 
-# - name: debug output
-#   ansible.builtin.debug:
-#     msg: "{{ git_output.stdout }}"
+- name: debug output
+  ansible.builtin.debug:
+    msg: "{{ git_output.stdout }}"
 
 - name: push change
   ansible.builtin.command:
