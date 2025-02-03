@@ -43,7 +43,7 @@
     - pwd
     - git status
     - git add . 
-    - git commit -am 'update day2 values accordingly'"
+    - git commit -am 'update day2 values accordingly'
   register: git_output
 
 - name: debug output
