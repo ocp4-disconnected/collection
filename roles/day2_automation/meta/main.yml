@@ -1,0 +1,3 @@
+dependencies:
+  - ocp4.disconnected.common
+  - ocp4.disconnected.git
