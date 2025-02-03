@@ -5,7 +5,7 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
-- name: Check for valid IP of host
+- name: Check for valid IP
   ansible.builtin.fail:
     msg: "No valid IP found for git host {{ ipv4_address }}"
   when: "{{ ipv4_address[0] is undefined or not ipv4_address[0] is ansible.utils.ip }}"
@@ -20,27 +20,27 @@
   become: true
   register: day2_values
 
-- name: get remote settings
+- name: Get existing remotes
   ansible.builtin.command:
     cmd: "git remote"
   register: remote_status
 
-- name: check for localhost remote
+- name: Check for localhost remote
   ansible.builtin.debug:
-    msg: localhost remote found
+    msg: "localhost remote found"
   when: "{{ remote_status.stdout is search('localhost') }}"
 
-- name: update remote path
+- name: Update remotes to include the local git host path
   ansible.builtin.command:
     cmd: "git remote add localhost git@{{ipv4_address[0]}}:/home/git/repos/ocp4-disconnected-config"
   when: "{{ not remote_status.stdout is search('localhost') }}"
 
-- name: check for changes
+- name: Check for changes before commiting
   ansible.builtin.command:
     cmd: "git status"
   register: git_status
 
-- name: commit change
+- name: Commit updated values files
   ansible.builtin.shell: |
     pwd
     git add . 
@@ -50,40 +50,34 @@
   register: git_output
   when: "{{ not git_status.stdout is search('nothing to commit') }}"
 
-- name: debug output
-  ansible.builtin.debug:
-    msg: "{{ git_output.stdout }}"
-  when: "{{ not git_status.stdout is search('nothing to commit') }}"
+# - name: debug output
+#   ansible.builtin.debug:
+#     msg: "{{ git_output.stdout }}"
+#   when: "{{ not git_status.stdout is search('nothing to commit') }}"
 
-- name: push change
+- name: Push changes to localhost remote
   ansible.builtin.command:
     cmd: "git push localhost"
   args:
     chdir: "{{ playbook_dir }}/../"
   when: "{{ not git_status.stdout is search('nothing to commit') }}"
 
-# - name: Generate day2 app config
-#   ansible.builtin.template:
-#     src: "day2-argo-app.j2"
-#     dest: "{{ playbook_dir }}/day2-argo-app.yaml"
-#     mode: '0644'
-#     owner: "{{ ansible_user_id }}"
-#     group: wheel
-#   become: true
-#   register: day2_config
+- name: Generate day2 app config
+  ansible.builtin.template:
+    src: "day2-argo-app.j2"
+    dest: "{{ playbook_dir }}/day2-argo-app.yaml"
+    mode: '0644'
+    owner: "{{ ansible_user_id }}"
+    group: wheel
+  become: true
+  register: day2_config
 
-# - name: Create day2 app in OpenShift
-#   ansible.builtin.command:
-#     cmd: "oc apply -f {{ playbook_dir }}/day2-argo-app.yaml"
-#   when: day2_config.changed
+- name: Create day2 app in OpenShift
+  ansible.builtin.command:
+    cmd: "oc apply -f {{ playbook_dir }}/day2-argo-app.yaml"
+  when: day2_config.changed
 
-# - name: Cleanup app config
-#   ansible.builtin.file:
-#     path: "{{ playbook_dir }}/day2-argo-app.yaml"
-#     state: absent
-
-
-# - name: write to file
-#   ansible.builtin.file:
-
-
+- name: Cleanup day2 app config file
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/day2-argo-app.yaml"
+    state: absent
