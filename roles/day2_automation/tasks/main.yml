@@ -52,12 +52,14 @@
 - name: debug output
   ansible.builtin.debug:
     msg: "{{ git_output.stdout }}"
+  when: "{{ not git_status.stdout is search('nothing to commit') }}"
 
 - name: push change
   ansible.builtin.command:
     cmd: "git push localhost"
   args:
     chdir: "{{ playbook_dir }}/../"
+  when: "{{ not git_status.stdout is search('nothing to commit') }}"
 
 # - name: Generate day2 app config
 #   ansible.builtin.template:
