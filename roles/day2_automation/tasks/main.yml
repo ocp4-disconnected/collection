@@ -82,15 +82,35 @@
     path: "{{ playbook_dir }}/day2-argo-app.yaml"
     state: absent
 
-- name: Check status of day2 app in argo
-  ansible.builtin.shell: |
-    oc get application cluster-day2 -o yaml
-  register: argo_app_status
-  retries: 240
-  delay: 15 #240 retries at 15 seconds = 1 hour timeout
-  # TODO: fix until search for the right status
-  until: "{{ argo_app_status.stdout is search('success') }}"
-
+- name: Check ArgoCD application status with retries
+  ansible.builtin.command: >
+    oc get application {{ argocd_application_name }}
+    -n argocd -o json
+  register: app_status
+  changed_when: false
+  until: >
+    (app_status.stdout | from_json).status.health.status == "Healthy"
+    and (app_status.stdout | from_json).status.sync.status == "Synced"
+  retries: 10  # Number of attempts
+  delay: 15    # Delay in seconds between retries
+  failed_when: app_status.stdout is not defined
+  
+- name: Parse and display final application status
+  vars:
+    health_status: "{{ (app_status.stdout | from_json).status.health.status }}"
+    sync_status: "{{ (app_status.stdout | from_json).status.sync.status }}"
+  debug:
+    msg: >
+      Final status of application "{{ argocd_application_name }}":
+      Health: {{ health_status }}, Sync: {{ sync_status }}
+  
+- name: Fail if application did not become healthy and synced
+  fail:
+    msg: >
+      Application "{{ argocd_application_name }}" did not reach the expected state.
+      Current Health: {{ health_status }}, Sync Status: {{ sync_status }}
+  when: health_status != "Healthy" or sync_status != "Synced"
+  
 - name: Check status of day2 operators
   shell: oc get operator {{ item.name }} -o jsonpath='{.status.phase}'
   register: operator_status
