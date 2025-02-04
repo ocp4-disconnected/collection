@@ -1,22 +1,56 @@
-- name: Create {{ common_openshift_oc_mirror_dir }}
-  ansible.builtin.file:
-    path: "{{ item }}"
-    mode: '0755'
-    state: directory
-  with_items:
-    - "{{ common_openshift_oc_mirror_dir }}"
-  when: 
-    - common_content_pull | bool
-    - direction == 'pull'
+- name: Perform OpenShift content pull operations
+  block:
+    - name: Create {{ common_openshift_oc_mirror_dir }}
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0755'
+        state: directory
+      with_items:
+        - "{{ common_openshift_oc_mirror_dir }}"
 
-- name: Include tasks to pull images
-  include_tasks: pull_images.yml
-  loop: 
-    - cluster-images.yml
-    - operators.yml
-  loop_control:
-    loop_var: item
-  when: 
+    - name: Check if {{ ansible_user_dir }}/.docker/config.json exists
+      ansible.builtin.stat:
+        path: "{{ ansible_user_dir }}/.docker/config.json"
+      register: docker_config_json
+      failed_when: not docker_config_json.stat.exists
+    
+    - name: Load the JSON file
+      ansible.builtin.slurp:
+        path: "{{ ansible_user_dir }}/.docker/config.json"
+      register: docker_config_json_content
+      when: docker_config_json.stat.exists
+    
+    - name: Parse and validate JSON
+      set_fact:
+        config_json: "{{ docker_config_json_content.content | b64decode | from_json }}"
+      when: docker_config_json.stat.exists
+
+    - name: Fetch the cluster update keys YAML file
+      ansible.builtin.get_url:
+        url: "{{ mirror_content_pgpkey_location }}"
+        dest: "/tmp/pgpkey_raw"
+        mode: '0644'
+
+    - name: Process and clean the file
+      ansible.builtin.shell: |
+        sed -n '/openshift[.]io/d;s/Comment:.*//;s/^    //p' /tmp/pgpkey_raw > "{{ common_openshift_oc_mirror_dir }}/pgpkey"
+      args:
+        executable: /bin/bash
+
+    - name: Ensure permissions are correct
+      ansible.builtin.file:
+        path: "{{ common_openshift_oc_mirror_dir }}/pgpkey"
+        mode: '0644'
+
+    - name: Include tasks to pull images
+      include_tasks: pull_images.yml
+      loop:
+        - cluster-images.yml
+        - operators.yml
+      loop_control:
+        loop_var: item
+
+  when:
     - common_content_pull | bool
     - direction == 'pull'
 

@@ -164,25 +164,24 @@
     - tridentctl
   when: move_bin is changed
 
-- name: Validate openshift-install version
-  ansible.builtin.shell: "openshift-install version"
-  register: install_check
-  ignore_errors: true
-  failed_when: 
-    - 'install_check.rc != 0'
-    - "'{{ common_openshift_release}}' not in install_check.stdout"
-  changed_when: false
-  when: not common_fips_enabled 
+- name: Check if FIPS mode is enabled
+  command: fips-mode-setup --check
+  register: fips_check_result
+  failed_when: false
+  become: true
 
-- name: Validate openshift-install-fips version
-  ansible.builtin.shell: "openshift-install-fips version"
+- name: Set common_fips_enabled fact
+  set_fact:
+    common_fips_enabled: "{{ 'enabled' in fips_check_result.stdout }}"
+
+- name: Validate openshift-install version
+  ansible.builtin.shell: "{{ 'openshift-install-fips' if common_fips_enabled else 'openshift-install' }} version"
   register: install_check
   ignore_errors: true
   failed_when: 
     - 'install_check.rc != 0'
     - "'{{ common_openshift_release}}' not in install_check.stdout"
   changed_when: false
-  when: common_fips_enabled 
 
 - name: Check for saved registry
   ansible.builtin.stat:
@@ -208,12 +207,6 @@
   ansible.builtin.command: 
     cmd: ansible-galaxy collection download --requirements-file ../collections/requirements.yml --download-path {{ common_openshift_download_dir }}/collections
   when: common_content_pull | bool
-
-#- name: Download required ansible collections
-#  community.general.ansible_galaxy_install:
-#    type: collection
-#    dest: "{{ common_openshift_download_dir }}/collections"
-#    requirements_file: "{{ playbook_dir }}/../collections/requirements.yml"
 
 - name: check for pre-downloaded RHCOS image
   ansible.builtin.find:
@@ -246,43 +239,21 @@
   when: rhcos is changed
 
 - block:
-  - block:
-    - name: Detect RHCOS image URL
-      ansible.builtin.command: 
-        cmd: "{{ common_openshift_client_bin }}/openshift-install-fips coreos print-stream-json"
-      register: rhcos_image_info_fips
-      no_log: true
+  - name: Detect RHCOS image URL
+    ansible.builtin.command: 
+      cmd: "{{ 'openshift-install-fips' if common_fips_enabled else 'openshift-install' }} coreos print-stream-json"
+    register: rhcos_image_info_fips
+    no_log: true
 
-    - name: Parse RHCOS image URL
-      set_fact:
-        rhcos_image_url: "{{ rhcos_image_info_fips.stdout | from_json | json_query('architectures.x86_64.artifacts.metal.formats.iso.disk.location') }}"
+  - name: Parse RHCOS image URL
+    set_fact:
+      rhcos_image_url: "{{ rhcos_image_info_fips.stdout | from_json | json_query('architectures.x86_64.artifacts.metal.formats.iso.disk.location') }}"
 
-    - name: Download RHCOS image
-      get_url:
-        url: "{{ rhcos_image_url }}"
-        dest: "{{ common_openshift_download_dir }}/"
-        mode: '0644'
-
-    when: not common_fips_enabled 
-
-  - block:
-    - name: Detect RHCOS image URL FIPS
-      ansible.builtin.command: 
-        cmd: "{{ common_openshift_client_bin }}/openshift-install-fips coreos print-stream-json"
-      register: rhcos_image_info_fips
-      no_log: true
-
-    - name: Parse RHCOS image URL FIPS
-      set_fact:
-        rhcos_image_url: "{{ rhcos_image_info_fips.stdout | from_json | json_query('architectures.x86_64.artifacts.metal.formats.iso.disk.location') }}"
-
-    - name: Download RHCOS image FIPS
-      get_url:
-        url: "{{ rhcos_image_url }}"
-        dest: "{{ common_openshift_download_dir }}/"
-        mode: '0644'
-
-    when: common_fips_enabled 
+  - name: Download RHCOS image
+    get_url:
+      url: "{{ rhcos_image_url }}"
+      dest: "{{ common_openshift_download_dir }}/"
+      mode: '0644'
 
   when: rhcos_downloaded is changed
 

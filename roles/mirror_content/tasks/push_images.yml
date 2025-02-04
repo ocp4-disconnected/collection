@@ -21,14 +21,18 @@
       docker://{{ ipv4_address | first }}:{{ common_registry_port }} --v2
   environment:
     OC_MIRROR_CACHE: "{{ common_openshift_oc_mirror_dir }}/.cache"
+    OCP_SIGNATURE_VERIFICATION_PK: "{{ common_openshift_oc_mirror_dir }}/pgpkey"
   register: push_images_v2
   retries: 5
   delay: 10
   until: push_images_v2.rc == 0
   when: common_oc_mirror_v2 | bool
 
-- name: Write oc-mirror output to log file
-  ansible.builtin.copy:
-    content: "{{ push_images_v2.stdout }}"
-    dest: "~/oc-mirror-{{ image_source }}-register.log"
-  when: common_oc_mirror_v2 | bool
+- name: Remove push dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }}/oc-mirror-workspace"
+    - "{{ common_openshift_oc_mirror_dir }}/.cache"
+  when: template_result.changed | bool
