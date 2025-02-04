@@ -21,9 +21,11 @@
 
 - name: Remove pull download dirs
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ download_dirs }}"
     state: absent
-  with_items:
+  loop:
     - "{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }}/oc-mirror-workspace"
     - "{{ common_openshift_oc_mirror_dir }}/.cache"
+  loop_control:
+    loop_var: download_dirs
   when: template_result.changed | bool
