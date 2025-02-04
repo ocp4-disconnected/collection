@@ -1,22 +1,22 @@
 ---
-- name:  Open port {{ media_share_webserver_port }} on the firewall
-  firewalld: 
-    port: "{{ media_share_webserver_port }}/tcp"
-    permanent: no
-    immediate: yes
-    state: enabled
-  become: true
+# - name:  Open port {{ media_share_webserver_port }} on the firewall
+#   firewalld: 
+#     port: "{{ media_share_webserver_port }}/tcp"
+#     permanent: no
+#     immediate: yes
+#     state: enabled
+#   become: true
   
-- name: Create the temporary webserver | runs in background via tmux
-  shell:
-    cmd: 'tmux new-session -d -s temp-webserver python3 -m http.server'
-  args:
-    chdir: "{{ common_openshift_cluster_install_dir }}"
+# - name: Create the temporary webserver | runs in background via tmux
+#   shell:
+#     cmd: 'tmux new-session -d -s temp-webserver python3 -m http.server'
+#   args:
+#     chdir: "{{ common_openshift_cluster_install_dir }}"
 
-- name: Set fact for {{ common_ip_space }} IPv4 address
-  set_fact:
-    ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
-  when: ipv4_address is undefined
+# - name: Set fact for {{ common_ip_space }} IPv4 address
+#   set_fact:
+#     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
+#   when: ipv4_address is undefined
 
 - name: Insert image file using HTTP.
   delegate_to: localhost
