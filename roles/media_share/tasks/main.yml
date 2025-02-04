@@ -16,7 +16,8 @@
 - name: Create the temporary webserver | runs in background via tmux
   shell: |
     if ! tmux has-session -t temp-webserver 2>/dev/null; then
-      tmux new-session -d -s temp-webserver python3 -m http.server
+      tmux new-session -d -s temp-webserver "python3 -m http.server"
+      return true
     fi
   args:
     chdir: "{{ common_openshift_cluster_install_dir }}"
