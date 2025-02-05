@@ -4,6 +4,11 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
+- name: Debug IP address of file host
+  ansible.builtin.debug:
+    msg: "ipv4_address is {{ipv4_address}}"
+  when: debug is defined and debug | bool
+
 - name: Insert image file using HTTP.
   delegate_to: localhost
   dellemc.openmanage.idrac_virtual_media:
