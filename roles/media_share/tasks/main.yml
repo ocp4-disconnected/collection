@@ -28,7 +28,6 @@
 #   failed_when: false
 #   when: (media_share_idrac | bool and filtered_idracs | length > 0) or media_share_webserver | bool
 - ansible.builtin.include_tasks: nfs_setup.yml
-  become: true
   when: (media_share_idrac | bool and filtered_idracs | length > 0) or media_share_webserver | bool
 
 - ansible.builtin.include_tasks: idrac.yml
