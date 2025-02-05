@@ -4,6 +4,11 @@
     filtered_idracs: >-
       {{ media_share_idracs | selectattr('name', 'search', '^' + role) | list }}
 
+- name: Debug filtered_idracs value
+  ansible.builtin.debug:
+    msg: "filtered_idracs value: {{ filtered_idracs }}"
+  when: debug is defined and debug | bool
+
 - name:  Open port {{ media_share_webserver_port }} on the firewall
   firewalld: 
     port: "{{ media_share_webserver_port }}/tcp"
@@ -11,18 +16,17 @@
     immediate: yes
     state: enabled
   become: true
-  when: media_share_idrac | bool and  filtered_idracs | length > 0
-  
+  when: (media_share_idrac | bool and filtered_idracs | length > 0) or media_share_webserver | bool
+
 - name: Create the temporary webserver | runs in background via tmux
   shell: |
     if ! tmux has-session -t temp-webserver 2>/dev/null; then
-      tmux new-session -d -s temp-webserver "python3 -m http.server"
-      return true
+      tmux new-session -d -s temp-webserver python3 -m http.server
     fi
   args:
     chdir: "{{ common_openshift_cluster_install_dir }}"
   failed_when: false
-  when: media_share_idrac | bool and filtered_idracs | length > 0
+  when: (media_share_idrac | bool and filtered_idracs | length > 0) or media_share_webserver | bool
 
 - ansible.builtin.include_tasks: idrac.yml
   loop: "{{ filtered_idracs }}"
@@ -31,4 +35,5 @@
   when: media_share_idrac | bool and  filtered_idracs | length > 0
 
 - ansible.builtin.include_tasks: stop_temp_web_server.yml
-  when: media_share_stop_web_server | bool
+  when: media_share_stop_webserver | bool
+
