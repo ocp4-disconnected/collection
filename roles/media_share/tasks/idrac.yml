@@ -16,9 +16,10 @@
     idrac_user: "{{ idrac_user }}"
     idrac_password: "{{ idrac_password }}"
     validate_certs: false
-    # force: true
+    force: true
+    timeout: 300
     virtual_media:
-      - insert: false
+      - insert: true
         image: "http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
         media_type: "CD"
 
