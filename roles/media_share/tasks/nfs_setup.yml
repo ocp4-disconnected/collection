@@ -1,0 +1,40 @@
+---
+- name: Install NFS packages
+  package:
+    name: nfs-utils
+    state: present
+
+- name: Ensure NFS services are enabled and started
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - nfs-server
+    - rpcbind
+
+- name: Create NFS export directory
+  file:
+    path: "/srv/nfs_share"
+    state: directory
+    owner: nfsnobody
+    group: nfsnobody
+    mode: "0755"
+
+- name: Copy ISO file into NFS directory
+  copy:
+    src: "/home/sdill/install-2025-02-05/agent.x86_64.iso"
+    dest: "/srv/nfs_share/agent.x86_64.iso"
+    remote_src: no
+    owner: nfsnobody
+    group: nfsnobody
+    mode: "0644"
+
+- name: Add NFS export to exports file
+  lineinfile:
+    path: /etc/exports
+    line: "/srv/nfs_share *(rw,sync,no_root_squash,no_subtree_check)"
+    state: present
+
+- name: Apply NFS export changes
+  command: exportfs -r
