@@ -4,9 +4,9 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
-- name: Debug IP address of file host
+- name: Debug image path for iso file
   ansible.builtin.debug:
-    msg: "ipv4_address is {{ipv4_address}}"
+    msg: "image path: http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
   when: debug is defined and debug | bool
 
 - name: Insert image file using HTTP.
@@ -19,8 +19,8 @@
     force: true
     virtual_media:
       - insert: true
-        image: "http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
-        media_type: "DVD"
+        image: "//{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
+        media_type: "CD"
 
 - name: Boot Once via CD
   delegate_to: localhost
