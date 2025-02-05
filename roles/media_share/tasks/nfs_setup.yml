@@ -24,8 +24,8 @@
   file:
     path: "/srv/nfs_share"
     state: directory
-    owner: "{{ username_on_the_host }}"
-    group: "{{ username_on_the_host }}"
+    owner: sdill
+    group: sdill
     mode: "0755"
   become: true
 
@@ -34,8 +34,8 @@
     src: "/home/sdill/install-2025-02-05/agent.x86_64.iso"
     dest: "/srv/nfs_share/agent.x86_64.iso"
     remote_src: no
-    owner: "{{ username_on_the_host }}"
-    group: "{{ username_on_the_host }}"
+    owner: sdill
+    group: sdill
     mode: "0644"
   become: true
 
