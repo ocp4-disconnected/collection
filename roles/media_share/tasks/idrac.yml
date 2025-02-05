@@ -19,7 +19,8 @@
     force: true
     virtual_media:
       - insert: true
-        image: "http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
+        # image: "http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
+        image: "{{ ipv4_address | first }}:agent.x86_64.iso"
         media_type: "CD"
 
 - name: Boot Once via CD
