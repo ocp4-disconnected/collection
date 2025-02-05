@@ -19,8 +19,8 @@
   file:
     path: "/srv/nfs_share"
     state: directory
-    owner: nfsnobody
-    group: nfsnobody
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: "0755"
   become: true
 
@@ -29,8 +29,8 @@
     src: "/home/sdill/install-2025-02-05/agent.x86_64.iso"
     dest: "/srv/nfs_share/agent.x86_64.iso"
     remote_src: no
-    owner: nfsnobody
-    group: nfsnobody
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: "0644"
   become: true
 
