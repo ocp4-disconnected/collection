@@ -6,7 +6,7 @@
 
 - name: Debug image path for iso file
   ansible.builtin.debug:
-    msg: "image path: http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
+    msg: "image path: {{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
   when: debug is defined and debug | bool
 
 - name: Insert image file using HTTP.
@@ -19,8 +19,7 @@
     force: true
     virtual_media:
       - insert: true
-        # image: "http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
-        image: "{{ ipv4_address | first }}:agent.x86_64.iso"
+        image: "http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
         media_type: "CD"
 
 - name: Boot Once via CD
