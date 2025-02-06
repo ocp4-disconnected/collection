@@ -84,7 +84,7 @@
 
 - name: Check ArgoCD application status with retries
   ansible.builtin.command: >
-    oc get application {{ argocd_application_name }}
+    oc get application cluster-day2
     -n argocd -o json
   register: app_status
   changed_when: false
