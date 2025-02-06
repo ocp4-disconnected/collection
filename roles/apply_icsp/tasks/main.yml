@@ -3,6 +3,7 @@
   shell:
     cmd: |
       oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]' 
+  when: not common_connected_cluster | bool
 
 - name: Run workflow for applying ICSP with oc-mirror v1
   include_tasks: mirror-v1.yml
