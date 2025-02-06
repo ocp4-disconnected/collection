@@ -13,6 +13,11 @@
   set_fact:
     sshKey: "{{ lookup('ansible.builtin.file', common_ssh_key) }}"
 
+- name: Remove original day1 values file if present
+  ansible.builtin.file:
+    path: "{{ helm_values_filepath }}"
+    state: absent
+
 - name: Generate day1 values file
   ansible.builtin.template:
     src: "day1-values.yaml.j2"
