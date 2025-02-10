@@ -160,25 +160,28 @@
 - name: Check ArgoCD application status with retries
   ansible.builtin.shell: |
     oc get application cluster-stage3 -n openshift-gitops -o json
-  register: app_status
+  register: stage3_app_status
   changed_when: false
   until: >
-    (app_status.stdout | from_json).status.health.status == "Healthy"
-    and (app_status.stdout | from_json).status.sync.status == "Synced"
+    (stage3_app_status.stdout | from_json).status.health.status == "Healthy"
+    and (stage3_app_status.stdout | from_json).status.sync.status == "Synced"
   retries: 10  # Number of attempts
   delay: 15    # Delay in seconds between retries
-  failed_when: app_status.stdout is not defined
+  failed_when: stage3_app_status.stdout is not defined
   
 - name: Parse and display final application status
   vars:
-    health_status: "{{ (app_status.stdout | from_json).status.health.status }}"
-    sync_status: "{{ (app_status.stdout | from_json).status.sync.status }}"
+    health_status: "{{ (stage3_app_status.stdout | from_json).status.health.status }}"
+    sync_status: "{{ (stage3_app_status.stdout | from_json).status.sync.status }}"
   debug:
     msg: >
       Final status of application "{{ stage3_app_name }}":
       Health: {{ health_status }}, Sync: {{ sync_status }}
   
 - name: Fail if application did not become healthy and synced
+  vars:
+    health_status: "{{ (stage3_app_status.stdout | from_json).status.health.status }}"
+    sync_status: "{{ (stage3_app_status.stdout | from_json).status.sync.status }}"
   fail:
     msg: >
       Application "{{ stage3_app_name }}" did not reach the expected state.
