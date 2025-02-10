@@ -42,24 +42,26 @@ nmstate:
     target_namespace: openshift-nmstate
 
 nncps:
+  bond:
+    name: bond0
     bond:
-        name: bond0
-        bond:
-        ports:
-            - ens2f0
-            - ens2f1
-            - ens3f0  
-            - ens3f1
-        vlans:
-        - id: 677
-        - id: 58
-        - id: 670
-    nodes:
-        - name: bond-ips
-        node: master-0
-        vlans:
-            - id: 672
-            ip: 192.168.1.1
+      ports:
+        - ens2f0
+        - ens2f1
+        - ens3f0  
+        - ens3f1
+        # etc
+    vlans:
+      - id: 677
+      - id: 58
+      - id: 670
+      # etc
+  nodes:
+    - name: bond-ips
+      node: master-0
+      vlans:
+        - id: 672
+          ip: 192.168.1.1
 
 # LDAP configuration.
 # Used in:
