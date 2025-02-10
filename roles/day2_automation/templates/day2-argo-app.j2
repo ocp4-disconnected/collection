@@ -13,6 +13,6 @@ spec:
       - ansible_values.yaml
     path: ./helm/openshift-gitops-day2
     repoURL: git@{{ ipv4_address | first  }}:repos/ocp4-disconnected-config
-    targetRevision: {{ argo_sync_ref | default "HEAD" }}
+    targetRevision: {{ argo_sync_ref if argo_sync_ref is defined else "HEAD" }}
   syncPolicy:
     manual: {}
