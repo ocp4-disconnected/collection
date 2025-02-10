@@ -13,7 +13,7 @@
 - name: Generate day2 values file
   ansible.builtin.template:
     src: "day2-values-file.j2"
-    dest: "{{ playbook_dir }}/../helm/openshift-gitops-day2/values.yaml"
+    dest: "{{ playbook_dir }}/../helm/openshift-gitops-day2/ansible_values.yaml"
     mode: '0755'
     owner: git
     group: git

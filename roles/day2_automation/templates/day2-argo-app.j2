@@ -10,7 +10,7 @@ spec:
   source:
     helm:
       valueFiles:
-      - values.yaml
+      - ansible_values.yaml
     path: ./helm/openshift-gitops-day2
     repoURL: git@{{ ipv4_address | first  }}:repos/ocp4-disconnected-config
     targetRevision: HEAD
