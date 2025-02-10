@@ -117,13 +117,13 @@
     sync_status: "{{ (app_status.stdout | from_json).status.sync.status }}"
   debug:
     msg: >
-      Final status of application "{{ argocd_application_name }}":
+      Final status of application "{{ day2_app_name }}":
       Health: {{ health_status }}, Sync: {{ sync_status }}
   
 - name: Fail if application did not become healthy and synced
   fail:
     msg: >
-      Application "{{ argocd_application_name }}" did not reach the expected state.
+      Application "{{ day2_app_name }}" did not reach the expected state.
       Current Health: {{ health_status }}, Sync Status: {{ sync_status }}
   when: health_status != "Healthy" or sync_status != "Synced"
 
@@ -172,12 +172,12 @@
     sync_status: "{{ (app_status.stdout | from_json).status.sync.status }}"
   debug:
     msg: >
-      Final status of application "{{ argocd_application_name }}":
+      Final status of application "{{ stage3_app_name }}":
       Health: {{ health_status }}, Sync: {{ sync_status }}
   
 - name: Fail if application did not become healthy and synced
   fail:
     msg: >
-      Application "{{ argocd_application_name }}" did not reach the expected state.
+      Application "{{ stage3_app_name }}" did not reach the expected state.
       Current Health: {{ health_status }}, Sync Status: {{ sync_status }}
   when: health_status != "Healthy" or sync_status != "Synced"

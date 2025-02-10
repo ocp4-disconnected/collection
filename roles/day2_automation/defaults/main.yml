@@ -1,2 +1,4 @@
 ---
 # defaults file for day2_automation
+day2_app_name: "cluster-day2"
+stage3_app_name: "cluster-day2-stage3"
