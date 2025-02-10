@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cluster-day2
+  name: cluster-day2-stage3
   namespace: openshift-gitops
 spec:
   destination:
@@ -11,7 +11,7 @@ spec:
     helm:
       valueFiles:
       - ansible_values.yaml
-    path: ./helm/openshift-gitops-day2
+    path: ./helm/stage3
     repoURL: git@{{ ipv4_address | first  }}:repos/ocp4-disconnected-config
     targetRevision: {{ argo_sync_ref | default "HEAD" }}
   syncPolicy:
