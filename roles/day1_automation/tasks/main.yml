@@ -46,7 +46,7 @@
     chdir: "{{ playbook_dir }}/../helm/openshift-gitops"
   when: auto_run_helm | bool and helm_day1_release_name not in helm_release_exists.stdout
 
-- name: Run a helm upgrade on existing helm release (requires allow_helm_day1_upgrades=true)
+- name: Run a helm upgrade on existing helm release.
   ansible.builtin.shell: | 
     oc project default
     helm upgrade "{{ helm_day1_release_name }}"" .
