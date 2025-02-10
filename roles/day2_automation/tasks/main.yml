@@ -121,10 +121,13 @@
       Health: {{ health_status }}, Sync: {{ sync_status }}
   
 - name: Fail if application did not become healthy and synced
+  vars:
+    health_status: "{{ (app_status.stdout | from_json).status.health.status }}"
+    sync_status: "{{ (app_status.stdout | from_json).status.sync.status }}"
   fail:
     msg: >
       Application "{{ day2_app_name }}" did not reach the expected state.
-      Current Health: {{ health_status }}, Sync Status: {{ sync_status }}
+      Current Health: "{{ health_status }}", Sync Status: "{{ sync_status }}"
   when: health_status != "Healthy" or sync_status != "Synced"
 
 - name: Generate stage3 app config
