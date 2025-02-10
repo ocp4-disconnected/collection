@@ -31,7 +31,7 @@ operators:
     startingCSV: mtv-operator.v2.6.3
     sourceNamespace: openshift-marketplace
 
-gitRepoTemplate:
+gitopsConfig:
   # The URL of the repository setup in the Ansible step.
   url: git@{{ ipv4_address | first  }}:repos/ocp4-disconnected-config
   # The SSH key of the user that ran the Ansible step, used to connect to the git repo
