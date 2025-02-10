@@ -27,7 +27,7 @@
     group: wheel
   become: true
 
-  - name: Check for existing helm release
+- name: Check for existing helm release
   ansible.builtin.command: helm list -n default
   register: helm_release_exists
   ignore_errors: yes
