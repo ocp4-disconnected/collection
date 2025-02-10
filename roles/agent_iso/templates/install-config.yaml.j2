@@ -45,11 +45,7 @@ platform:
   none: {}
 {% endif %}
 fips: {{ common_fips_enabled }}
-{% if not common_connected_cluster | bool %}
-pullSecret: '{{ lookup('ansible.builtin.file', '/run/user/1000/containers/auth.json' ) }}'
-{% else %}
 pullSecret: '{{ lookup('ansible.builtin.file', ansible_user_dir + '/.docker/config.json' ) }}'
-{% endif %}
 sshKey: "{{ lookup('ansible.builtin.file', common_ssh_key + '.pub' ) }}"
 {% if not common_connected_cluster | bool %}
 additionalTrustBundle: |

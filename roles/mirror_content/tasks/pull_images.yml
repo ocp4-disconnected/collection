@@ -1,21 +1,4 @@
 ---
-- name: Check if {{ ansible_user_dir }}/.docker/config.json exists
-  ansible.builtin.stat:
-    path: "{{ ansible_user_dir }}/.docker/config.json"
-  register: docker_config_json
-  failed_when: not docker_config_json.stat.exists
-
-- name: Load and validate JSON file
-  ansible.builtin.slurp:
-    path: "{{ ansible_user_dir }}/.docker/config.json"
-  register: docker_config_json_content
-  when: docker_config_json.stat.exists
-
-- name: Parse and validate JSON
-  set_fact:
-    config_json: "{{ docker_config_json_content.content | b64decode | from_json }}"
-  when: docker_config_json.stat.exists
-
 - name: Generete oc-mirror imagesetconfigs for {{ item }}
   ansible.builtin.template:
     src: "{{ item }}.j2"
@@ -27,15 +10,20 @@
     cmd: "{{ common_openshift_client_bin }}/oc-mirror --config {{ common_openshift_oc_mirror_dir }}/{{ item }} \
       file://{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }} {{ '--v2' if common_oc_mirror_v2 | default(false) | bool else '' }}"
   environment:
-    OC_MIRROR_CACHE: "{{ common_openshift_oc_mirror_dir }}/.cache"  
+    OC_MIRROR_CACHE: "{{ common_openshift_oc_mirror_dir }}/.cache"
+    OCP_SIGNATURE_VERIFICATION_PK: "{{ common_openshift_oc_mirror_dir }}/pgpkey"
   register: mirror_pull
   when: template_result.changed | bool
   retries: 5
   delay: 10
+  failed_when: mirror_pull.stdout is search("error|failed|timeout|permission denied|mirror failed|unable to fetch|invalid signature", ignorecase=True)
   until: mirror_pull.rc == 0
 
-- name: Remove pull oc-mirror-workspace
+- name: Remove pull download dirs
   ansible.builtin.file:
-    path: "{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }}/oc-mirror-workspace"
+    path: "{{ item }}"
     state: absent
+  with_items:
+    - "{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }}/oc-mirror-workspace"
+    - "{{ common_openshift_oc_mirror_dir }}/.cache"
   when: template_result.changed | bool
