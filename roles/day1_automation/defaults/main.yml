@@ -4,3 +4,4 @@ helm_values_filepath: "{{ playbook_dir }}/../helm/openshift-gitops/ansible_value
 helm_day1_release_name: gitops-day1
 helm_options: "-f ./ansible_values.yaml --wait-for-jobs --timeout 15m"
 auto_run_helm: true
+allow_helm_day1_upgrades: false #set this to true if you want to allow the helm upgrade command when the helm release already exists. Generally it's better to manually uninstall all the operators and delete their namespaces and rerun helm install for this scenario though

@@ -37,16 +37,16 @@
   ansible.builtin.debug:
     msg: "{{ helm_release_exists.stdout }}"
 
-- name: Run a fresh helm install
+- name: Run a fresh helm install (this may take a while)
   ansible.builtin.command: 
     cmd: "helm install {{ helm_day1_release_name }} {{ helm_options }} ."
   args:
     chdir: "{{ playbook_dir }}/../helm/openshift-gitops"
   when: auto_run_helm | bool and helm_day1_release_name not in helm_release_exists.stdout
 
-- name: Run a helm upgrade on existing helm release
+- name: Run a helm upgrade on existing helm release (requires allow_helm_day1_upgrades=true)
   ansible.builtin.command: 
     cmd: "helm upgrade {{ helm_day1_release_name }} ."
   args:
     chdir: "{{ playbook_dir }}/../helm/openshift-gitops"
-  when: auto_run_helm | bool and helm_day1_release_name in helm_release_exists.stdout
+  when: auto_run_helm | bool and helm_day1_release_name in helm_release_exists.stdout and allow_helm_day1_upgrades | bool
