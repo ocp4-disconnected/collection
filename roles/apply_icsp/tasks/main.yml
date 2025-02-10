@@ -16,3 +16,4 @@
 - name: Run workflow for applying ICSP with oc-mirror v2
   include_tasks: mirror-v2.yml
   when: common_oc_mirror_v2 | bool
+  

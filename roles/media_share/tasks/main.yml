@@ -4,6 +4,11 @@
     filtered_idracs: >-
       {{ media_share_idracs | selectattr('name', 'search', '^' + role) | list }}
 
+- name: Debug filtered_idracs value
+  ansible.builtin.debug:
+    msg: "filtered_idracs value: {{ filtered_idracs }}"
+  when: debug is defined and debug | bool
+
 - name:  Open port {{ media_share_webserver_port }} on the firewall
   firewalld: 
     port: "{{ media_share_webserver_port }}/tcp"
@@ -31,3 +36,4 @@
 
 - ansible.builtin.include_tasks: stop_temp_web_server.yml
   when: media_share_stop_webserver | bool
+

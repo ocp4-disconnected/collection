@@ -4,6 +4,11 @@
     ipv4_address: "{{ ansible_all_ipv4_addresses | select('match', '^' + common_ip_space + '\\.') | list }}"
   when: ipv4_address is undefined
 
+- name: Debug image path for iso file
+  ansible.builtin.debug:
+    msg: "image path: {{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
+  when: debug is defined and debug | bool
+
 - name: Insert image file using HTTP.
   delegate_to: localhost
   dellemc.openmanage.idrac_virtual_media:
@@ -12,10 +17,11 @@
     idrac_password: "{{ idrac_password }}"
     validate_certs: false
     force: true
+    timeout: 300
     virtual_media:
       - insert: true
         image: "http://{{ ipv4_address | first }}:{{ media_share_webserver_port }}/agent.x86_64.iso"
-        media_type: "DVD"
+        media_type: "CD"
 
 - name: Boot Once via CD
   delegate_to: localhost

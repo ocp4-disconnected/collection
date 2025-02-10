@@ -33,6 +33,4 @@
     path: "{{ item }}"
     state: absent
   with_items:
-    - "{{ common_openshift_oc_mirror_dir }}/{{ item.split ('.')[0] }}/oc-mirror-workspace"
     - "{{ common_openshift_oc_mirror_dir }}/.cache"
-  when: template_result.changed | bool

@@ -1,12 +1,12 @@
 namespace: "ocp4"
 name: "disconnected"
-version: "1.0.2-rc1"
+version: "1.0.2-rc2"
 readme: "README.md"
 authors:
     - "Matt Riensch (example@gmail.com)"
     - "Christopher Novak (example@gmail.com)"
 dependencies:
-    "dellemc.openmanage": "9.1.0"
+    "dellemc.openmanage": "9.10.0"
     "containers.podman": "1.16.1"
     "ansible.posix": "1.5.4"
     "cisco.nxos": "8.1.0"
@@ -14,4 +14,4 @@ dependencies:
     "community.crypto": "2.22.0"
 license:
     - "MIT"
-repository: "https://github.com/cjnovak98/ocp4-disconnected-collection.git"
+repository: "https://github.com/ocp4-disconnected/collection.git"
