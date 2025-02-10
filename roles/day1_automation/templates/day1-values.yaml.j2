@@ -20,15 +20,13 @@ operators:
     installPlanApproval: Automatic
     providedAPIs: "NMState.v1.nmstate.io"
     channel: stable
-    startingCSV: kubernetes-nmstate-operator.4.16.0-202501211505
     sourceNamespace: openshift-marketplace
   - name: mtv-operator
     subNamespace: openshift-mtv
     # source: cs-redhat-operator-index-v4-16
     source: {{ "cs-redhat-operator-index-v4-16" if common_connected_cluster is false else "redhat-operators" }}
     providedAPIs: "ForkliftController.v1beta1.forklift.konveyor.io,Hook.v1beta1.forklift.konveyor.io,Host.v1beta1.forklift.konveyor.io,Migration.v1beta1.forklift.konveyor.io,NetworkMap.v1beta1.forklift.konveyor.io,OpenStackVolumePopulator.v1beta1.forklift.konveyor.io,OvirtVolumePopulator.v1beta1.forklift.konveyor.io,Plan.v1beta1.forklift.konveyor.io,Provider.v1beta1.forklift.konveyor.io,StorageMap.v1beta1.forklift.konveyor.io"
-    channel: release-v2.6
-    startingCSV: mtv-operator.v2.6.3
+    channel: release-v2.7
     sourceNamespace: openshift-marketplace
 
 gitopsConfig:
