@@ -27,10 +27,8 @@
     group: wheel
   become: true
 
-- name: Check for existing helm release
-  ansible.builtin.shell: |
-    oc project default
-    helm list
+  - name: Check for existing helm release
+  ansible.builtin.command: helm list -n default
   register: helm_release_exists
   ignore_errors: yes
 
@@ -39,17 +37,13 @@
     msg: "{{ helm_release_exists.stdout }}"
 
 - name: Run a fresh helm install (this may take a while)
-  ansible.builtin.shell: |
-    oc project default
-    helm install "{{ helm_day1_release_name }}" "{{ helm_options }}" .
+  ansible.builtin.command: helm install {{ helm_day1_release_name }} {{ helm_options }} . -n default
   args:
     chdir: "{{ playbook_dir }}/../helm/openshift-gitops"
   when: auto_run_helm | bool and helm_day1_release_name not in helm_release_exists.stdout
 
 - name: Run a helm upgrade on existing helm release.
-  ansible.builtin.shell: | 
-    oc project default
-    helm upgrade "{{ helm_day1_release_name }}" .
+  ansible.builtin.command: helm upgrade {{ helm_day1_release_name }} . -n default
   args:
     chdir: "{{ playbook_dir }}/../helm/openshift-gitops"
   when: auto_run_helm | bool and helm_day1_release_name in helm_release_exists.stdout and allow_helm_day1_upgrades | bool
