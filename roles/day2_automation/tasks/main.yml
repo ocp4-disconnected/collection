@@ -91,7 +91,7 @@
 
 - name: Check ArgoCD application status with retries
   ansible.builtin.shell: |
-    oc get application cluster-day2 -o json
+    oc get application cluster-day2 -n openshift-gitops -o json
   register: app_status
   changed_when: false
   until: >
@@ -116,20 +116,3 @@
       Application "{{ argocd_application_name }}" did not reach the expected state.
       Current Health: {{ health_status }}, Sync Status: {{ sync_status }}
   when: health_status != "Healthy" or sync_status != "Synced"
-  
-- name: Check status of day2 operators
-  shell: oc get operator {{ item.name }} -o jsonpath='{.status.phase}'
-  register: operator_status
-  until: operator_status.stdout == "Succeeded"
-  retries: "{{ max_retries }}"
-  delay: "{{ delay_between_retries }}"
-  with_items: "{{ content_generation_disconnected_operators[0]['redhat-operator-index'] }}"
-  async: "{{ (max_retries * delay_between_retries) + 10 }}"
-  poll: "{{ delay_between_retries }}"
-  failed_when: operator_status.stdout != "Succeeded"
-  changed_when: false
-
-# - name: debug
-#   ansible.builtin.debug:
-#     msg: echo {{ item.name }}
-#   with_items: "{{ content_generation_disconnected_operators[0]['redhat-operator-index'] }}"
