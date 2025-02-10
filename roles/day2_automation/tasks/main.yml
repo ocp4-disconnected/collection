@@ -91,13 +91,13 @@
 - name: Output from creating day2 app
   ansible.builtin.debug:
     msg: "{{ create_day2_app_status.stdout }}"
-  when: debug | bool
+  when: debug | bool and day2_config.changed
 
 - name: Cleanup day2 app config file
   ansible.builtin.file:
     path: "{{ playbook_dir }}/day2-argo-app.yaml"
     state: absent
-  when: not debug | bool
+  when: not debug | bool and day2_config.changed
 
 - name: Check ArgoCD application status with retries
   ansible.builtin.shell: |
@@ -146,13 +146,13 @@
 - name: Output from creating stage3 app
   ansible.builtin.debug:
     msg: "{{ create_stage3_app_status.stdout }}"
-  when: debug | bool
+  when: debug | bool and stage3_config.changed
 
 - name: Cleanup stage3 app config file
   ansible.builtin.file:
     path: "{{ playbook_dir }}/stage3-argo-app.yaml"
     state: absent
-  when: not debug | bool
+  when: not debug | bool and stage3_config.changed
 
 - name: Check ArgoCD application status with retries
   ansible.builtin.shell: |
