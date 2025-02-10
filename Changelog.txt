@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2RC2]
+### Added
+- Day1 helm chart now able to watch for operator installation status
+- day2_automation role 
+    - generates values for multiple stages of day 2 automatically
+    - adds the local git server as a new remote on the current repo, named 'localhost'
+    - generates the manifest for the cluster-day2 app in argo and uses oc apply to create it
+    - generates the manifest for the stage3 app in argo and uses oc oc apply to create it
+    - watches for healthy and synced status of argo apps
+- Ansible now generates the values files for both day1 and day2 off a template. It is also now generating it as a separate file called ansible_values.yaml instead of just overwriting values.yaml
+- Added new flags to helm install command for day1 that lets it wait for a 'post-install' hook to complete and set the timeout
+- additional debug tasks that look for a debug: true var in order to run
+
+
+### Changed
+- Day 1 automation now responsible for installing all operators via helm
+- Day 2 automation split into two parts.
+    - part 1: configure the operators (i.e. mtv forklift controller or nmstate instance etc)
+    - part 2: configure the actual objects (i.e. NetworkAttachmentDefinitions)
+- set the logic for disabling default catalog sources to be based on common_connected_cluster var
+
+
+### Fixed
+- All references to the old repos have been updated
+- upgraded version for dellemc.openmanage to 9.10 instead of 9.1
+- upgraded tag for ocp4-disconnected collection to 1.0.2RC2
+
+### Removed
+
+---
+
 ## [1.0.2RC1]
 ### Added
 - Plays to detect bastion fips mode
