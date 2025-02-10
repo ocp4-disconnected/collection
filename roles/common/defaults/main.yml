@@ -1,8 +1,8 @@
 # Defaults main.yml for common role
 
 common_git_repos:
-  - "https://github.com/cjnovak98/ocp4-disconnected-collection.git"
-  - "https://github.com/cjnovak98/ocp4-disconnected-config"
+  - "https://github.com/ocp4-disconnected/collection.git"
+  - "https://github.com/ocp4-disconnected/config.git"
 
 
 ## Global variables used by most/all roles

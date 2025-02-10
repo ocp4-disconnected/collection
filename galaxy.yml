@@ -14,4 +14,4 @@ dependencies:
     "community.crypto": "2.22.0"
 license:
     - "MIT"
-repository: "https://github.com/cjnovak98/ocp4-disconnected-collection.git"
+repository: "https://github.com/ocp4-disconnected/collection.git"
