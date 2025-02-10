@@ -49,7 +49,7 @@
 - name: Run a helm upgrade on existing helm release.
   ansible.builtin.shell: | 
     oc project default
-    helm upgrade "{{ helm_day1_release_name }}"" .
+    helm upgrade "{{ helm_day1_release_name }}" .
   args:
     chdir: "{{ playbook_dir }}/../helm/openshift-gitops"
   when: auto_run_helm | bool and helm_day1_release_name in helm_release_exists.stdout and allow_helm_day1_upgrades | bool
