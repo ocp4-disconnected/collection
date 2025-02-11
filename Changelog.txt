@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.0.2RC3]
+### Added
+- retires for inital helm install, incase api isnt reachable
+
 ### Changed
 - until statement for argo app deployments
 

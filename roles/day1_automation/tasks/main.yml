@@ -40,6 +40,10 @@
   ansible.builtin.command: helm install {{ helm_day1_release_name }} {{ helm_options }} . -n default
   args:
     chdir: "{{ playbook_dir }}/../helm/openshift-gitops"
+  register: helm_install_result
+  until: "'Kubernetes cluster unreachable' not in helm_install_result.stderr"
+  retries: 5
+  delay: 30
   when: auto_run_helm | bool and helm_day1_release_name not in helm_release_exists.stdout
 
 - name: Run a helm upgrade on existing helm release.
