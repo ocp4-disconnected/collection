@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2RC3]
+### Changed
+- until statement for argo app deployments
+- argo sync policy for day2
+
+### Fixed
+- references to old repo
+
 ## [1.0.2RC2]
 ### Added
 - Day1 helm chart now able to watch for operator installation status
