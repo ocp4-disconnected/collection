@@ -5,7 +5,6 @@ All notable changes to this project will be documented in this file.
 ## [1.0.2RC3]
 ### Changed
 - until statement for argo app deployments
-- argo sync policy for day2
 
 ### Fixed
 - references to old repo
