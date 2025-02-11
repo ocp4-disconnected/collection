@@ -7,6 +7,7 @@
   retries: 15
   delay: 15
   until: patch_operators.rc == 0
+  when: not common_connected_cluster
 
 - name: Run workflow for applying ICSP with oc-mirror v1
   include_tasks: mirror-v1.yml
