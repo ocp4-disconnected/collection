@@ -42,7 +42,7 @@
 
 - name: Update remotes to include the local git host path
   ansible.builtin.command:
-    cmd: "git remote add localhost git@{{ipv4_address[0]}}:/home/git/repos/ocp4-disconnected-config"
+    cmd: "git remote add localhost git@{{ipv4_address[0]}}:/home/git/repos/config"
   when: "{{ not remote_status.stdout is search('localhost') }}"
 
 - name: Check for changes before commiting
@@ -105,9 +105,10 @@
   register: app_status
   changed_when: false
   until: >
-    (app_status.stdout | from_json).status.health.status == "Healthy"
-    and (app_status.stdout | from_json).status.sync.status == "Synced"
-  retries: 10  # Number of attempts
+    (app_status.stdout | trim | length > 0) and
+    (app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
+    (app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
+  retries: 20  # Number of attempts
   delay: 15    # Delay in seconds between retries
   failed_when: app_status.stdout is not defined
   
@@ -163,8 +164,9 @@
   register: stage3_app_status
   changed_when: false
   until: >
-    (stage3_app_status.stdout | from_json).status.health.status == "Healthy"
-    and (stage3_app_status.stdout | from_json).status.sync.status == "Synced"
+    (app_status.stdout | trim | length > 0) and
+    (app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
+    (app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
   retries: 10  # Number of attempts
   delay: 15    # Delay in seconds between retries
   failed_when: stage3_app_status.stdout is not defined
