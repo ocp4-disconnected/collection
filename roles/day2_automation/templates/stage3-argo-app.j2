@@ -12,7 +12,7 @@ spec:
       valueFiles:
       - ansible_values.yaml
     path: ./helm/stage3
-    repoURL: git@{{ ipv4_address | first  }}:repos/config
+    repoURL: git@{{ ipv4_address | first  }}:repos/config.git
     targetRevision: {{ argo_sync_ref if argo_sync_ref is defined else "HEAD" }}
   syncPolicy:
-    manual: {}
+    {{ syncPolicy if syncPolicy is defined else "automated" }}: {}

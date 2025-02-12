@@ -19,8 +19,8 @@ cluster:
 
 mtv:
     enabled: {{ mtv.enabled if mtv["enabled"] is defined else true }}
-    # catalog_source: {{ mtv.catalog_source if mtv["catalog_source"] is defined else "cs-redhat-operator-index-v4-16" }}
-    catalog_source: redhat-operators
+    catalog_source: {{ mtv.catalog_source if mtv["catalog_source"] is defined else "cs-redhat-operator-index-v4-16" }}
+    # catalog_source: redhat-operators
     target_namespace: {{ mtv.target_namespace if mtv["target_namespace"] is defined else "openshift-mtv" }}
     controller_max_vm_inflight: {{ mtv.controller_max_vm_inflight if mtv["controller_max_vm_inflight"] is defined else "20" }}
     # these values will need to be replaced by actual vcenter info in order to pull over VMs from that source
@@ -31,14 +31,9 @@ mtv:
         endpoint: mtv-endpoint
         init_image: mtv-registry/init/image:1
 
-namespace:
-    - ns: openshift-mtv
-    - ns: openshift-nmstate
-  
 nmstate:
     enabled: true
-    # catalog_source: cs-redhat-operator-index-v4-16
-    catalog_source: redhat-operators
+    catalog_source: {{ catalog_source if catalog_source is defined else "cs-redhat-operator-index-v4-16" }}
     target_namespace: openshift-nmstate
 
 nncps:
