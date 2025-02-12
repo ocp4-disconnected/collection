@@ -101,8 +101,8 @@
     (app_status.stdout | trim | length > 0) and
     (app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
     (app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
-  retries: 20  # Number of attempts
-  delay: 15    # Delay in seconds between retries
+  retries: 40  # Number of attempts
+  delay: 30   # Delay in seconds between retries
   failed_when: app_status.stdout is not defined
 
 - name: Fail if application did not become healthy and synced
@@ -145,8 +145,8 @@
     (stage3_app_status.stdout | trim | length > 0) and
     (stage3_app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
     (stage3_app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
-  retries: 10  # Number of attempts
-  delay: 15    # Delay in seconds between retries
+  retries: 40  # Number of attempts
+  delay: 30    # Delay in seconds between retries
   failed_when: stage3_app_status.stdout is not defined
   
 - name: Fail if application did not become healthy and synced
