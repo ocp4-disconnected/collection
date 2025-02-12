@@ -18,7 +18,7 @@
 
 - name: Generate values files
   ansible.builtin.template:
-    src: "day2-values.yaml.j2"
+    src: "day2-values-file.j2"
     dest: "{{ item }}"
     mode: '0644'
     owner: "{{ ansible_user_id }}"
