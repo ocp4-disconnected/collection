@@ -1,10 +1,11 @@
 namespace: "ocp4"
 name: "disconnected"
-version: "1.0.2-rc2"
+version: "1.0.2-rc3"
 readme: "README.md"
 authors:
-    - "Matt Riensch (example@gmail.com)"
-    - "Christopher Novak (example@gmail.com)"
+    - "Matt Riensch"
+    - "Christopher Novak"
+    - Steven Dill
 dependencies:
     "dellemc.openmanage": "9.10.0"
     "containers.podman": "1.16.1"

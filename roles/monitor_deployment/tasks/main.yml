@@ -26,7 +26,7 @@
   ansible.builtin.shell: |
     operators_found=$(oc get co --no-headers | grep {{ common_openshift_release }} | wc -l)
     
-    operators_unhealthy=$(oc get co --no-headers | grep {{ common_openshift_release }} | awk '$3 != "True" || $4 == "True" || $5 == "True"' | wc -l)
+    operators_unhealthy=$(oc get co --no-headers | awk '$3 != "True" || $4 != "False" || $5 != "False"' | wc -l)
     
     if [ $operators_found -eq 0 ]; then
       echo "Bad output for oc get co"

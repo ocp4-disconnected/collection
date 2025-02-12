@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2RC3]
+### Added
+- retires for inital helm install, incase api isnt reachable
+- default for debug in day2 role
+
+### Changed
+- until statement for argo app deployments
+- location of common_openshift_cluster_install_dir
+
+### Fixed
+- references to old repo
+
 ## [1.0.2RC2]
 ### Added
 - Day1 helm chart now able to watch for operator installation status

@@ -104,7 +104,7 @@
     remote_src: true
     mode: '0644'
     backup: true
-  when: gen_iso is changed or gen_iso_fips is changed
+  when: gen_iso is changed
 
 - name: Insert master-0 IP as nameserver
   ansible.builtin.lineinfile:

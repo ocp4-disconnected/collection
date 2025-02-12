@@ -9,27 +9,26 @@
   ansible.builtin.fail:
     msg: "No valid IP found for git host {{ ipv4_address }}"
   when: "{{ ipv4_address[0] is undefined or not ipv4_address[0] is ansible.utils.ip }}"
+
+- name: Create config file dir
+  ansible.builtin.file:
+    path: "{{ common_config_file_dir }}"
+    mode: '0755'
+    state: directory
+
+- name: Generate values files
+  ansible.builtin.template:
+    src: "day2-values-file.j2"
+    dest: "{{ item }}"
+    mode: '0644'
+    owner: "{{ ansible_user_id }}"
+    group: wheel
+  become: true
+  with_items:
+    - "{{ playbook_dir }}/../helm/openshift-gitops-day2/ansible_values.yaml"
+    - "{{ playbook_dir }}/../helm/stage3/ansible_values.yaml"
+    - "{{ common_config_file_dir }}/ansible_values_day2.yaml"
   
-- name: Generate day2 values file
-  ansible.builtin.template:
-    src: "day2-values-file.j2"
-    dest: "{{ playbook_dir }}/../helm/openshift-gitops-day2/ansible_values.yaml"
-    mode: '0755'
-    owner: git
-    group: git
-  become: true
-  register: day2_values
-
-- name: Generate stage3 values file
-  ansible.builtin.template:
-    src: "day2-values-file.j2"
-    dest: "{{ playbook_dir }}/../helm/stage3/ansible_values.yaml"
-    mode: '0755'
-    owner: git
-    group: git
-  become: true
-  register: day2_values
-
 - name: Get existing remotes
   ansible.builtin.command:
     cmd: "git remote"
@@ -42,7 +41,7 @@
 
 - name: Update remotes to include the local git host path
   ansible.builtin.command:
-    cmd: "git remote add localhost git@{{ipv4_address[0]}}:/home/git/repos/ocp4-disconnected-config"
+    cmd: "git remote add localhost git@{{ipv4_address[0]}}:/home/git/repos/config.git"
   when: "{{ not remote_status.stdout is search('localhost') }}"
 
 - name: Check for changes before commiting
@@ -60,10 +59,10 @@
   register: git_output
   when: "{{ not git_status.stdout is search('nothing to commit') }}"
 
-# - name: debug output
-#   ansible.builtin.debug:
-#     msg: "{{ git_output.stdout }}"
-#   when: "{{ not git_status.stdout is search('nothing to commit') }}"
+- name: debug output
+  ansible.builtin.debug:
+    msg: "{{ git_output.stdout }}"
+  when: git_output is changed and debug | bool
 
 - name: Push changes to localhost remote
   ansible.builtin.command:
@@ -75,7 +74,7 @@
 - name: Generate day2 app config
   ansible.builtin.template:
     src: "day2-argo-app.j2"
-    dest: "{{ playbook_dir }}/day2-argo-app.yaml"
+    dest: "{{ common_config_file_dir }}/day2-argo-app.yaml"
     mode: '0644'
     owner: "{{ ansible_user_id }}"
     group: wheel
@@ -84,7 +83,7 @@
 
 - name: Create day2 app in OpenShift
   ansible.builtin.command:
-    cmd: "oc apply -f {{ playbook_dir }}/day2-argo-app.yaml"
+    cmd: "oc apply -f {{ common_config_file_dir }}/day2-argo-app.yaml"
   when: day2_config.changed
   register: create_day2_app_status
 
@@ -93,33 +92,19 @@
     msg: "{{ create_day2_app_status.stdout }}"
   when: debug | bool and day2_config.changed
 
-- name: Cleanup day2 app config file
-  ansible.builtin.file:
-    path: "{{ playbook_dir }}/day2-argo-app.yaml"
-    state: absent
-  when: not debug | bool and day2_config.changed
-
 - name: Check ArgoCD application status with retries
   ansible.builtin.shell: |
     oc get application cluster-day2 -n openshift-gitops -o json
   register: app_status
   changed_when: false
   until: >
-    (app_status.stdout | from_json).status.health.status == "Healthy"
-    and (app_status.stdout | from_json).status.sync.status == "Synced"
-  retries: 10  # Number of attempts
-  delay: 15    # Delay in seconds between retries
+    (app_status.stdout | trim | length > 0) and
+    (app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
+    (app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
+  retries: 40  # Number of attempts
+  delay: 30   # Delay in seconds between retries
   failed_when: app_status.stdout is not defined
-  
-- name: Parse and display final application status
-  vars:
-    health_status: "{{ (app_status.stdout | from_json).status.health.status }}"
-    sync_status: "{{ (app_status.stdout | from_json).status.sync.status }}"
-  debug:
-    msg: >
-      Final status of application "{{ day2_app_name }}":
-      Health: {{ health_status }}, Sync: {{ sync_status }}
-  
+
 - name: Fail if application did not become healthy and synced
   vars:
     health_status: "{{ (app_status.stdout | from_json).status.health.status }}"
@@ -133,7 +118,7 @@
 - name: Generate stage3 app config
   ansible.builtin.template:
     src: "stage3-argo-app.j2"
-    dest: "{{ playbook_dir }}/stage3-argo-app.yaml"
+    dest: "{{ common_config_file_dir }}/stage3-argo-app.yaml"
     mode: '0644'
     owner: "{{ ansible_user_id }}"
     group: wheel
@@ -142,7 +127,7 @@
 
 - name: Create stage3 app in OpenShift
   ansible.builtin.command:
-    cmd: "oc apply -f {{ playbook_dir }}/stage3-argo-app.yaml"
+    cmd: "oc apply -f {{ common_config_file_dir }}/stage3-argo-app.yaml"
   when: stage3_config.changed
   register: create_stage3_app_status
 
@@ -151,32 +136,18 @@
     msg: "{{ create_stage3_app_status.stdout }}"
   when: debug | bool and stage3_config.changed
 
-- name: Cleanup stage3 app config file
-  ansible.builtin.file:
-    path: "{{ playbook_dir }}/stage3-argo-app.yaml"
-    state: absent
-  when: not debug | bool and stage3_config.changed
-
-- name: Check ArgoCD application status with retries
+- name: Check stage3 application status with retries
   ansible.builtin.shell: |
-    oc get application cluster-stage3 -n openshift-gitops -o json
+    oc get application cluster-day2-stage3 -n openshift-gitops -o json
   register: stage3_app_status
   changed_when: false
   until: >
-    (stage3_app_status.stdout | from_json).status.health.status == "Healthy"
-    and (stage3_app_status.stdout | from_json).status.sync.status == "Synced"
-  retries: 10  # Number of attempts
-  delay: 15    # Delay in seconds between retries
+    (stage3_app_status.stdout | trim | length > 0) and
+    (stage3_app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
+    (stage3_app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
+  retries: 40  # Number of attempts
+  delay: 30    # Delay in seconds between retries
   failed_when: stage3_app_status.stdout is not defined
-  
-- name: Parse and display final application status
-  vars:
-    health_status: "{{ (stage3_app_status.stdout | from_json).status.health.status }}"
-    sync_status: "{{ (stage3_app_status.stdout | from_json).status.sync.status }}"
-  debug:
-    msg: >
-      Final status of application "{{ stage3_app_name }}":
-      Health: {{ health_status }}, Sync: {{ sync_status }}
   
 - name: Fail if application did not become healthy and synced
   vars:
