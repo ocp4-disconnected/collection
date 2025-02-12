@@ -17,6 +17,13 @@
     state: directory
 
 - name: Generate values files
+  ansible.builtin.template:
+    src: "day2-values.yaml.j2"
+    dest: "{{ item }}"
+    mode: '0644'
+    owner: "{{ ansible_user_id }}"
+    group: wheel
+  become: true
   with_items:
     - "{{ playbook_dir }}/../helm/openshift-gitops-day2/ansible_values.yaml"
     - "{{ playbook_dir }}/../helm/stage3/ansible_values.yaml"
