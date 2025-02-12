@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cluster-day2-stage3
+  name: {{ stage3_app_name if stage3_app_name is defined else "cluster-day2-stage3" }}
   namespace: openshift-gitops
 spec:
   destination:

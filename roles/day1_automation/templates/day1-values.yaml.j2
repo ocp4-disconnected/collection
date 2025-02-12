@@ -8,14 +8,12 @@ operators:
   - name: openshift-gitops-operator
     subNamespace: openshift-gitops
     targetNamespace: openshift-gitops-operator
-    # source: cs-redhat-operator-index-v4-16
     source: {{ "cs-redhat-operator-index-v4-16" if common_connected_cluster is false else "redhat-operators" }}
     channel: latest
     installPlanApproval: Automatic
     sourceNamespace: openshift-marketplace
   - name: kubernetes-nmstate-operator
     subNamespace: openshift-nmstate
-    # source: cs-redhat-operator-index-v4-16
     source: {{ "cs-redhat-operator-index-v4-16" if common_connected_cluster is false else "redhat-operators" }}
     installPlanApproval: Automatic
     providedAPIs: "NMState.v1.nmstate.io"
@@ -23,7 +21,6 @@ operators:
     sourceNamespace: openshift-marketplace
   - name: mtv-operator
     subNamespace: openshift-mtv
-    # source: cs-redhat-operator-index-v4-16
     source: {{ "cs-redhat-operator-index-v4-16" if common_connected_cluster is false else "redhat-operators" }}
     providedAPIs: "ForkliftController.v1beta1.forklift.konveyor.io,Hook.v1beta1.forklift.konveyor.io,Host.v1beta1.forklift.konveyor.io,Migration.v1beta1.forklift.konveyor.io,NetworkMap.v1beta1.forklift.konveyor.io,OpenStackVolumePopulator.v1beta1.forklift.konveyor.io,OvirtVolumePopulator.v1beta1.forklift.konveyor.io,Plan.v1beta1.forklift.konveyor.io,Provider.v1beta1.forklift.konveyor.io,StorageMap.v1beta1.forklift.konveyor.io"
     channel: release-v2.7
@@ -31,7 +28,11 @@ operators:
 
 gitopsConfig:
   # The URL of the repository setup in the Ansible step.
-  url: git@{{ ipv4_address | first  }}:repos/config
+  url: git@{{ ipv4_address | first  }}:repos/config.git
   # The SSH key of the user that ran the Ansible step, used to connect to the git repo
   sshPrivateKey: |
     {{ lookup('ansible.builtin.file', common_ssh_key) | indent }}
+  # only change these values if needed (the template has defaults set):
+  # namespace: openshift-gitops
+  # secretName: private-repo
+
