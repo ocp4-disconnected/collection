@@ -136,15 +136,15 @@
     msg: "{{ create_stage3_app_status.stdout }}"
   when: debug | bool and stage3_config.changed
 
-- name: Check ArgoCD application status with retries
+- name: Check stage3 application status with retries
   ansible.builtin.shell: |
-    oc get application cluster-stage3 -n openshift-gitops -o json
+    oc get application cluster-day2-stage3 -n openshift-gitops -o json
   register: stage3_app_status
   changed_when: false
   until: >
-    (app_status.stdout | trim | length > 0) and
-    (app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
-    (app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
+    (stage3_app_status.stdout | trim | length > 0) and
+    (stage3_app_status.stdout | from_json).get('status', {}).get('health', {}).get('status') == "Healthy" and
+    (stage3_app_status.stdout | from_json).get('status', {}).get('sync', {}).get('status') == "Synced"
   retries: 10  # Number of attempts
   delay: 15    # Delay in seconds between retries
   failed_when: stage3_app_status.stdout is not defined
