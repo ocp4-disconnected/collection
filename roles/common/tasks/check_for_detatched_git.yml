@@ -27,3 +27,8 @@
       debug:
         msg: "Checked out to new branch: ansible_run_{{ current_tag }}"
       when: git_detached_state and current_tag | length > 0
+
+    - name: Fetch history
+      ansible.builtin.shell: git fetch --unshallow 2>/dev/null
+      when: git_detached_state
+      failed_when: false

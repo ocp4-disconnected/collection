@@ -10,6 +10,15 @@
     msg: "No valid IP found for git host {{ ipv4_address }}"
   when: "{{ ipv4_address[0] is undefined or not ipv4_address[0] is ansible.utils.ip }}"
 
+- name: Get the current Git branch
+  ansible.builtin.shell: git rev-parse --abbrev-ref HEAD
+  register: git_branch
+  changed_when: false
+
+- name: Store the current branch in a variable
+  ansible.builtin.set_fact:
+    current_branch: "{{ git_branch.stdout }}"
+
 - name: Create config file dir
   ansible.builtin.file:
     path: "{{ common_config_file_dir }}"
@@ -66,10 +75,12 @@
 
 - name: Push changes to localhost remote
   ansible.builtin.command:
-    cmd: "git -c core.sshCommand='ssh -o StrictHostKeyChecking=accept-new' push localhost"
+    cmd: "git -c core.sshCommand='ssh -o StrictHostKeyChecking=accept-new' push --set-upstream localhost {{ current_branch }}"
   args:
     chdir: "{{ playbook_dir }}/../"
-  when: "{{ not git_status.stdout is search('nothing to commit') }}"
+  when: >
+    not git_status.stdout is search('nothing to commit') or
+    git_status.stdout is search('Your branch is ahead of')
 
 - name: Generate day2 app config
   ansible.builtin.template:
