@@ -1,6 +1,6 @@
 namespace: "ocp4"
 name: "disconnected"
-version: "1.0.2-rc3"
+version: "1.0.2-rc4"
 readme: "README.md"
 authors:
     - "Matt Riensch"

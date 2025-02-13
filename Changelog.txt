@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [1.0.2RC3]
+### Added
+- checks for git status/tag
+
+### Changed
+
+### Fixed
+- git repo head issue for argo
 
 ## [1.0.2RC3]
 ### Added
