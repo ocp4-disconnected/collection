@@ -9,7 +9,7 @@
 
     - name: Determine if in a detached HEAD state
       set_fact:
-        git_detached_state: "{{ 'Not currently on any branch.' in git_status_output.stdout }}"
+        git_detached_state: "{{ git_head_ref.rc != 0 }}"
 
     - name: Get the current tag if in detached HEAD state
       shell: git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD
