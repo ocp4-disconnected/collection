@@ -16,11 +16,7 @@
   changed_when: false
   args:
     chdir: "{{ playbook_dir }}/../"
-
-- name: Store the current branch in a variable
-  ansible.builtin.set_fact:
-    current_branch: "{{ git_branch.stdout }}"
-  failed_when: current_branch is "HEAD" or current_branch is ""
+  failed_when: "'HEAD' in git_branch.stdout"
 
 - name: Create config file dir
   ansible.builtin.file:
@@ -86,7 +82,7 @@
 
 - name: Push changes to localhost remote
   ansible.builtin.command:
-    cmd: "git -c core.sshCommand='ssh -o StrictHostKeyChecking=accept-new' push --set-upstream localhost {{ current_branch }}"
+    cmd: "git -c core.sshCommand='ssh -o StrictHostKeyChecking=accept-new' push --set-upstream localhost {{ git_branch.stdout }}"
   args:
     chdir: "{{ playbook_dir }}/../"
   when: >
