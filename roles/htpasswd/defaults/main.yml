@@ -1,0 +1,10 @@
+---
+# defaults file for htpasswd
+create_htpasswd_file: true
+create_htpass_secret: true
+create_oauth_config: true
+create_role_binding: true
+
+generate_passwd: true
+htpasswd_file_path: files/openshift.htpasswd
+htpasswd_user: admin
