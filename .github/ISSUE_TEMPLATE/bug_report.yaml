@@ -1,0 +1,103 @@
+---
+name: 🐞 Bug report
+description: Create a report to help us improve
+title: "BUG - In ROLE: with PLAY:"
+labels: ["bug"]
+projects: ["ocp4-disconnected/1"]
+body:
+- type: textarea
+  id: description
+  attributes:
+    label: Bug Description
+    description: A clear and concise description of what the bug is.
+    placeholder: Whenever I do x I see this issue
+  validations:
+    required: true
+
+- type: input
+  id: release
+  attributes:
+    label: Release/Release candidate
+    description: Release/Release candidate
+    placeholder: i.e. 1.0.2-rc5
+  validations:
+    required: false
+    
+- type: markdown
+  attributes:
+    value: |
+      What is the state of the Bastion/Ansible host?
+
+- type: dropdown
+  id: run
+  attributes:
+    label: Fresh/Subsequent Run?
+    multiple: false
+    options:
+      - Fresh Run
+      - Subsequent Run
+
+- type: dropdown
+  id: FIPS
+  attributes:
+    label: Is FIPS Enabled?
+    multiple: false
+    options:
+      - "Yes"
+      - "No"
+
+- type: dropdown
+  id: connected
+  attributes:
+    label: Connected/Disconnected?
+    multiple: false
+    options:
+      - Connected
+      - Disconnected
+
+
+- type: textarea
+  id: reproduce
+  attributes:
+    label: To Reproduce
+    description: list changes to files (outside what is provided)
+    placeholder: |
+      i.e.
+      group_vars:
+      cluster-deployment.yml:
+      cluster-version.yml:
+      ...etc
+  validations:
+    required: false
+
+- type: textarea
+  id: component
+  attributes:
+    label: Component/Role
+    description: which component or role is affected by this issue or needs to be chagned to resolve
+    placeholder: |
+      i.e pulling content on connected side or pushing cluster images on disconnected side
+  validations:
+    required: false
+
+- type: textarea
+  id: screenshots
+  attributes:
+    label: Screenshots
+    description: If applicable, add screeshots to help explain your problem.
+  validations:
+    required: false
+
+- type: textarea
+  id: troubleshooting
+  attributes:
+    label: Troubleshooting already preformed
+    description: what things have you already tried that did not resolve this issue?
+    placeholder: |
+      i.e - confirmed local collection version
+      - modified git branch
+      - rebooted cluster
+      - verified network connection
+      ...etc
+  validations:
+    required: false
