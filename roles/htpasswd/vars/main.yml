@@ -1,3 +1,2 @@
 ---
 # vars file for htpasswd
-htpasswd_file_path: /tmp/htpasswd.htpasswd

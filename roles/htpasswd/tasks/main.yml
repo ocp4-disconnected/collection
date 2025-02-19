@@ -16,3 +16,7 @@
 - name: "Create role binding"
   ansible.builtin.include_tasks: create_role_binding.yml
   when: create_role_binding == true
+
+- when: htpasswd_password is defined
+  ansible.builtin.debug:
+    msg: "Admin password is: {{ htpasswd_password }}"

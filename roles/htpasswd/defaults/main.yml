@@ -6,5 +6,7 @@ create_oauth_config: true
 create_role_binding: true
 
 generate_passwd: true
-htpasswd_file_path: files/openshift.htpasswd
+htpasswd_file_path: /tmp/tmp.htpasswd
 htpasswd_user: admin
+
+htpasswd_secret_file_dest: /tmp/htpasswd-secret.yml
