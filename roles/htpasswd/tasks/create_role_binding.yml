@@ -1,0 +1,21 @@
+---
+- name: "Generate Cluster Role Binding from template"
+  ansible.builin.template:
+    src: templates/cluster-role-binding-ca.j2
+    dest: "{{ openshift_crb_file_dest }}"
+
+- name: "Apply cluster role binding"
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ openshift_crb_file_dest }}"
+  when: package_info.packages.pip3.kubernetes is defined
+
+- name: "Apply cluster role binding"
+  ansible.builtin.shell:
+    cmd: "oc apply -f {{ openshift_crb_file_dest }}"
+  when: package_info.packages.pip3.kubernetes is not defined
+
+- name: "Clean up crb file"
+  ansible.builtin.file:
+    path: "{{ openshift_crb_file_dest }}"
+    state: absent

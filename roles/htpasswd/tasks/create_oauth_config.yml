@@ -1,0 +1,21 @@
+---
+- name: "Generate OAuth yaml"
+  ansible.builtin.template:
+    src: templates/htpass-oauth.j2
+    dest: "{{ htpass_oauth_file_dest }}"
+
+- name: "Apply OAuth to cluster"
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ htpass_oauth_file_dest }}"
+  when: package_info.packages.pip3.kubernetes is defined
+
+- name: "Apply OAuth to cluster"
+  ansible.builtin.shell:
+    cmd: "oc apply -f {{ htpasswd_oauth_file_dest }}"
+  when: package_info.packages.pip3.kubernetes is not defined
+
+- name: "Clean up oauth file"
+  ansible.builtin.file:
+    path: "{{ htpass_oauth_file_dest }}"
+    state: absent

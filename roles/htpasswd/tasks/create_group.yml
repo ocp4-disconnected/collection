@@ -1,0 +1,21 @@
+---
+- name: "Generate OpenShift group from template"
+  ansible.builtin.template:
+    src: templates/cluster-admin-group.j2
+    dest: "{{ openshift_group_file_dest }}"
+
+- name: "Apply group to cluster"
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ openshift_group_file_dest }}"
+  when: package_info.packages.pip3.kubernetes is defined
+
+- name: "Apply group to cluster"
+  ansible.builtin.shell:
+    cmd: "oc apply -f {{ openshift_group_file_dest }}"
+  when: package_info.packages.pip3.kubernetes is not defined
+
+- name: "Clean up group file"
+  ansible.builtin.file:
+    path: "{{ openshift_group_file_dest }}"
+    state: absent
