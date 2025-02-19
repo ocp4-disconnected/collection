@@ -43,8 +43,8 @@ body:
     label: Is FIPS Enabled?
     multiple: false
     options:
-      - Yes
-      - No
+      - "Yes"
+      - "No"
 
 - type: dropdown
   id: connected
