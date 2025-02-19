@@ -1,7 +1,7 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This Role creates a htpasswd file then generates an OpenShift secret using said file and configures OAuth in the cluster.
 
 Requirements
 ------------
