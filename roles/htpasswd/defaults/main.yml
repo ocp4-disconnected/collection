@@ -1,0 +1,17 @@
+---
+# defaults file for htpasswd
+create_htpasswd_file: true
+create_htpass_secret: true
+create_oauth_config: true
+create_group: true
+create_role_binding: true
+
+generate_passwd: true
+htpasswd_file_path: /tmp/tmp.htpasswd
+htpasswd_user: admin
+
+htpasswd_secret_file_dest: /tmp/htpasswd-secret.yml
+htpass_oauth_file_dest: /tmp/htpass-oauth.yml
+
+openshift_group_file_dest: /tmp/openshift-admin-group.yml
+openshift_crb_file_dest: /tmp/openshift-admin-crb.yml

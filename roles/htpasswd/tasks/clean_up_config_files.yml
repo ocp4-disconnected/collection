@@ -1,0 +1,25 @@
+---
+- name: "Clean up htpasswd file"
+  ansible.builtin.file:
+    path: "{{ htpasswd_file_path }}"
+    state: absent
+
+- name: "Clean up secret file"
+  ansible.builtin.file:
+    path: "{{ htpasswd_secret_file_dest }}"
+    state: absent
+
+- name: "Clean up group file"
+  ansible.builtin.file:
+    path: "{{ openshift_group_file_dest }}"
+    state: absent
+
+- name: "Clean up oauth file"
+  ansible.builtin.file:
+    path: "{{ htpass_oauth_file_dest }}"
+    state: absent
+
+- name: "Clean up crb file"
+  ansible.builtin.file:
+    path: "{{ openshift_crb_file_dest }}"
+    state: absent
