@@ -5,6 +5,7 @@ create_htpass_secret: true
 create_oauth_config: true
 create_group: true
 create_role_binding: true
+remove_kubeadmin: true
 
 generate_passwd: true
 htpasswd_file_path: /tmp/tmp.htpasswd

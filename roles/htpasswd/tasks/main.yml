@@ -32,5 +32,9 @@
     msg: "Admin password is: {{ htpasswd_password }}"
   when: htpasswd_password is defined
 
-- name: "Create role binding"
+- name: "Clean up config files"
   ansible.builtin.include_tasks: clean_up_config_files.yml
+
+#- name: "Delete kubeadmin"
+#  ansible.builtin.include_tasks: remove_kubeadmin.yml
+#  when: remove_kubeadmin == true
