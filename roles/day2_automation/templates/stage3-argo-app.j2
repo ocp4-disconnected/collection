@@ -13,6 +13,6 @@ spec:
       - ansible_values.yaml
     path: ./helm/stage3
     repoURL: git@{{ ipv4_address | first  }}:repos/config.git
-    targetRevision: {{ current_branch if current_branch is defined else "HEAD" }}
+    targetRevision: {{ git_branch.stdout if git_branch.stdout is defined else "HEAD" }}
   syncPolicy:
     {{ syncPolicy if syncPolicy is defined else "automated" }}: {}

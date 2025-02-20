@@ -1,18 +1,23 @@
 ---
     - name: Run git status and check for detached HEAD
-      shell: git status
+      shell: git symbolic-ref -q HEAD
       register: git_status_output
       changed_when: false
+      ignore_errors: true
+      args:
+        chdir: "{{ playbook_dir }}/../"
 
     - name: Determine if in a detached HEAD state
       set_fact:
-        git_detached_state: "{{ 'Not currently on any branch.' in git_status_output.stdout }}"
+        git_detached_state: "{{ git_status_output.rc != 0 }}"
 
     - name: Get the current tag if in detached HEAD state
       shell: git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD
       register: git_tag
       changed_when: false
       when: git_detached_state
+      args:
+        chdir: "{{ playbook_dir }}/../"
 
     - name: Store the tag in a variable
       set_fact:
@@ -22,6 +27,8 @@
     - name: Checkout to a new branch using the tag name
       shell: git checkout -b "ansible_run_{{ current_tag }}"
       when: git_detached_state and current_tag | length > 0
+      args:
+        chdir: "{{ playbook_dir }}/../"
 
     - name: Debug the new branch name
       debug:
@@ -32,3 +39,5 @@
       ansible.builtin.shell: git fetch --unshallow 2>/dev/null
       when: git_detached_state
       failed_when: false
+      args:
+        chdir: "{{ playbook_dir }}/../"

@@ -65,7 +65,7 @@
    - agent-config.yaml
   register: install_templates     
 
-- name: Create copys of configuration files
+- name: Create copies of configuration files
   ansible.builtin.copy:
     src: "{{ common_openshift_cluster_install_dir }}/{{ item }}-copy"
     dest: "{{ common_openshift_cluster_install_dir }}/{{ item }}"

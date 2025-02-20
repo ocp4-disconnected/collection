@@ -14,10 +14,9 @@
   ansible.builtin.shell: git rev-parse --abbrev-ref HEAD
   register: git_branch
   changed_when: false
-
-- name: Store the current branch in a variable
-  ansible.builtin.set_fact:
-    current_branch: "{{ git_branch.stdout }}"
+  args:
+    chdir: "{{ playbook_dir }}/../"
+  failed_when: "'HEAD' in git_branch.stdout"
 
 - name: Create config file dir
   ansible.builtin.file:
@@ -42,6 +41,8 @@
   ansible.builtin.command:
     cmd: "git remote"
   register: remote_status
+  args:
+    chdir: "{{ playbook_dir }}/../"
 
 - name: Check for localhost remote
   ansible.builtin.debug:
@@ -52,11 +53,15 @@
   ansible.builtin.command:
     cmd: "git remote add localhost git@{{ipv4_address[0]}}:/home/git/repos/config.git"
   when: "{{ not remote_status.stdout is search('localhost') }}"
+  args:
+    chdir: "{{ playbook_dir }}/../"
 
 - name: Check for changes before commiting
   ansible.builtin.command:
     cmd: "git status"
   register: git_status
+  args:
+    chdir: "{{ playbook_dir }}/../"
 
 - name: Commit updated values files
   ansible.builtin.shell: |
@@ -75,7 +80,7 @@
 
 - name: Push changes to localhost remote
   ansible.builtin.command:
-    cmd: "git -c core.sshCommand='ssh -o StrictHostKeyChecking=accept-new' push --set-upstream localhost {{ current_branch }}"
+    cmd: "git -c core.sshCommand='ssh -o StrictHostKeyChecking=accept-new' push --set-upstream localhost {{ git_branch.stdout }}"
   args:
     chdir: "{{ playbook_dir }}/../"
   when: >
