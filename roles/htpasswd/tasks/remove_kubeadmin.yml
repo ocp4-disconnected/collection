@@ -11,3 +11,7 @@
   ansible.builtin.shell:
     cmd: "oc delete secrets kubeadmin -n kube-system"
   when: permissions_match.rc == 0
+  register: delete_secret_result
+  failed_when:
+    - "NotFound" not in delete_secret_result.stderr
+    - delete_secret_result.rc != 0
