@@ -1,0 +1,13 @@
+---
+- name: "Verify {{ htpasswd_user }} is a cluster admin"
+  ansible.builin.shell:
+    cmd: |
+      kubeadmin_perms=`oc auth can-i --as=kubeadmin --list`
+      admin_perms=`oc auth can-i --as={{ htpasswd_user }} --list`   
+      diff <(echo "$kubeadmin_perms") <(echo "$admin_perms")
+  register: permissions_match
+
+- name: "Remove kubeadmin secrets"
+  ansible.builtin.shell:
+    cmd: "oc delete secrets kubeadmin -n kube-system"
+  when: permissions_match.rc == 0
