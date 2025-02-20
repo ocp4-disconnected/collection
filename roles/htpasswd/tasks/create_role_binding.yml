@@ -1,6 +1,6 @@
 ---
 - name: "Generate Cluster Role Binding from template"
-  ansible.builin.template:
+  ansible.builtin.template:
     src: templates/cluster-role-binding-ca.j2
     dest: "{{ openshift_crb_file_dest }}"
 
