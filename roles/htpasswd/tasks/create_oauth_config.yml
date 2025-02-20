@@ -12,6 +12,6 @@
 
 - name: "Apply OAuth to cluster"
   ansible.builtin.shell:
-    cmd: "oc apply -f {{ htpasswd_oauth_file_dest }}"
+    cmd: "oc apply -f {{ htpass_oauth_file_dest }}"
   when: package_info.packages.pip3.kubernetes is not defined
 
